@@ -5,20 +5,5 @@ import { Signup } from './pages/signup/signup';
 import { Login } from './pages/login/login';
 
 export const routes: Routes = [
-  {
-    path: '',
-    component: LandingComponent
-  },
-  {
-    path: 'home',
-    component: HomeComponent
-  },
-  {
-    path: 'signup',
-    component: Signup
-  },
-  {
-    path: 'login',
-    component: Login
-  }
+    {path:'trip-form', loadComponent: () => import('./pages/trip-form/trip-form').then(m => m.TripForm)},
 ];
