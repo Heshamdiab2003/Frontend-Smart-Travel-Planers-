@@ -1,258 +1,161 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-.login-container {
-  display: flex;
-  height: 100vh;
-  width: 100%;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  overflow: hidden;
-}
-
-/* ===== LEFT - IMAGE SIDE ===== */
-.image-side {
-  width: 50%;
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.image-side img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.image-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 32px 28px;
-  background: linear-gradient(to top, rgba(0,0,0,0.55), transparent);
-}
-
-.quote-card p {
-  color: #fff;
-  font-family: 'Playfair Display', serif;
-  font-size: 20px;
-  line-height: 1.45;
-  margin-bottom: 12px;
-}
-
-.quote-card span {
-  color: rgba(255,255,255,0.75);
-  font-size: 10px;
-  letter-spacing: 2.5px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 500;
-}
-
-.quote-card span::before {
-  content: '— ';
-}
-
-/* ===== RIGHT - FORM SIDE ===== */
-.form-side {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.split-screen-wrapper {
   background: #FDFBF7;
-  padding: 40px 0;
-}
-
-.form-wrapper {
-  width: 70%;
-}
-
-/* ===== BRAND ===== */
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #B54304;
-  font-family: 'Playfair Display', serif;
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 32px;
-}
-
-.brand-icon {
-  background: #B54304;
-  color: white;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-}
-
-/* ===== HEADINGS ===== */
-h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  color: #3D2B2F;
-  margin-bottom: 6px;
-}
-
-.subtitle {
-  color: #6B6B6B;
-  font-size: 14px;
-  margin-bottom: 28px;
-}
-
-/* ===== FORM ===== */
-.form-group {
-  margin-bottom: 18px;
-}
-
-.form-group label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  font-weight: 500;
-  color: #3D2B2F;
-  margin-bottom: 6px;
-}
-
-.forgot {
-  color: #B54304;
-  font-size: 12px;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.forgot:hover {
-  color: #3D2B2F;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  background: #fff;
-  color: #3D2B2F;
-  outline: none;
-  transition: border 0.2s;
 }
 
-.form-group input::placeholder {
-  color: #6B6B6B;
+.auth-banner {
+  flex: 1.1;
+  background-image: linear-gradient(135deg, rgba(181, 67, 4, 0.75), rgba(38, 24, 20, 0.95)), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80');
+  background-size: cover;
+  background-position: center;
 }
 
-.form-group input:focus {
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  font-weight: 800;
+  font-size: 1.8rem;
+  letter-spacing: 0.05em;
+}
+
+.badge-featured {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.28);
+  font-size: 0.7rem;
+  letter-spacing: 1.2px;
+}
+
+.font-serif {
+  font-family: 'Playfair Display', serif;
+}
+
+.auth-form-side {
+  flex: 0.9;
+  background: #FDFBF7;
+}
+
+.back-home-btn {
+  top: 24px;
+  right: 24px;
+  width: 42px;
+  height: 42px;
+  color: #B54304;
+  background: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.back-home-btn:hover {
+  background: #B54304;
+  color: #ffffff;
   border-color: #B54304;
+  transform: scale(1.05);
 }
 
-.password-wrapper {
-  position: relative;
+.form-container {
+  max-width: 400px;
 }
 
-.password-wrapper input {
-  width: 100%;
-  padding-right: 40px;
+.brand-logo-dark {
+  color: #B54304;
+  letter-spacing: 0.05em;
 }
 
-.eye-icon {
-  position: absolute;
-  right: 12px;
+.text-deep {
+  color: #261814;
+}
+
+.form-label {
+  color: #261814;
+  letter-spacing: 0.5px;
+}
+
+.input-icon {
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  cursor: pointer;
-  font-size: 16px;
   color: #6B6B6B;
 }
 
-/* ===== BUTTONS ===== */
-.btn-primary {
-  width: 100%;
-  padding: 12px;
-  background: #B54304;
-  color: #FDFBF7;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 600;
+.form-control {
+  padding-left: 46px;
+  color: #261814;
+  box-shadow: inset 0 2px 4px rgba(61, 43, 47, 0.02);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.form-control::placeholder {
+  color: #b5ada8;
+}
+
+.form-control:focus {
+  border-color: #B54304;
+  box-shadow: 0 0 0 4px rgba(181, 67, 4, 0.08);
+  color: #261814;
+}
+
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
   cursor: pointer;
-  margin-top: 8px;
-  transition: background 0.2s;
 }
 
-.btn-primary:hover {
-  background: #3D2B2F;
-}
-
-.divider {
-  text-align: center;
-  margin: 18px 0;
-  position: relative;
-  color: #6B6B6B;
-  font-size: 11px;
-  letter-spacing: 1px;
-}
-
-.divider::before,
-.divider::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 30%;
-  height: 1px;
-  background: #ddd;
-}
-
-.divider::before { left: 0; }
-.divider::after { right: 0; }
-
-.btn-google {
-  width: 100%;
-  padding: 11px;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  color: #3D2B2F;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: background 0.2s;
-}
-
-.btn-google:hover {
-  background: #FDFBF7;
+.custom-checkbox:checked {
+  background-color: #B54304;
   border-color: #B54304;
 }
 
-/* ===== FOOTER LINK ===== */
-.signup-link {
-  text-align: center;
-  margin-top: 24px;
-  font-size: 13px;
-  color: #6B6B6B;
+.custom-checkbox:focus {
+  box-shadow: 0 0 0 3px rgba(181, 67, 4, 0.15);
 }
 
-.signup-link a {
+.small-link {
   color: #B54304;
-  text-decoration: none;
-  font-weight: 600;
+  transition: color 0.15s ease;
 }
 
-.signup-link a:hover {
+.small-link:hover {
   color: #3D2B2F;
+}
+
+.btn-auth-submit {
+  background: #B54304;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(181, 67, 4, 0.25);
+}
+
+.btn-auth-submit:hover {
+  background: #963503;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(181, 67, 4, 0.35);
+  color: #ffffff;
+}
+
+.btn-auth-submit:active {
+  transform: translateY(0);
+}
+
+.auth-redirect-link {
+  color: #B54304;
+  transition: color 0.15s ease;
+}
+
+.auth-redirect-link:hover {
+  color: #3D2B2F;
+}
+
+.btn-gmail {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-gmail:hover {
+  background-color: #FDFBF7 !important;
+  border-color: #B54304 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(181, 67, 4, 0.08) !important;
+}
+
+.btn-gmail:active {
+  transform: translateY(0);
 }

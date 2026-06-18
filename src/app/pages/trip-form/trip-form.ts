@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { dateRangeValidator } from '../../validators/date-validator';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';  // ← ضيفي ده
+import { RouterModule } from '@angular/router';
+import { Navbar } from '../../components/navbar/navbar';
 
 @Component({
   selector: 'app-trip-form',
-  imports: [ReactiveFormsModule, CommonModule, RouterModule],  // ← ضيفي RouterModule هنا
+  imports: [ReactiveFormsModule, CommonModule, RouterModule, Navbar],
   templateUrl: './trip-form.html',
   styleUrl: './trip-form.css',
 })

@@ -1,19 +1,24 @@
 import { Component, HostListener, Input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, NgIf],
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  imports: [CommonModule, RouterLink, RouterLinkActive],
+  templateUrl: './navbar.html',
+  styleUrl: './navbar.css'
 })
-export class NavbarComponent {
-  @Input() isLoggedIn: boolean = false;
+export class Navbar {
+
+  @Input() lightBg: boolean = false;
 
   isScrolled = false;
   isDropdownOpen = false;
+  isMenuOpen = false;
+
+  constructor(public authService: AuthService) {}
 
   @HostListener('window:scroll')
   onScroll() {
@@ -31,4 +36,11 @@ export class NavbarComponent {
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
+
+  logout() {
+    console.log('User signed out.');
+    this.authService.logout();
+    this.isDropdownOpen = false;
+  }
 }
+

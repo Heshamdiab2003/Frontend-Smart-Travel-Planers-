@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NavbarComponent } from '../../components/navbar/navbar.component';
+import { Navbar } from '../../components/navbar/navbar';
+import { Footer } from '../../components/footer/footer';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [RouterLink, NavbarComponent],
+  imports: [RouterLink, Navbar, Footer],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
