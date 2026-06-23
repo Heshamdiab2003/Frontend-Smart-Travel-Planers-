@@ -59,7 +59,10 @@ export interface ConfirmEmailDto {
   token: string;
 }
 
-const API_BASE = 'http://localhost:5000/api/Auth';
+// Same-origin path. The Angular dev server proxies /api/* to the backend
+// (see proxy.conf.json), so the browser only ever talks to http://localhost:4200 —
+// no CORS, and the backend's self-signed dev cert never reaches the browser.
+const API_BASE = '/api/Auth';
 const SESSION_KEY = 'stp_session_email';
 const PROFILE_KEY = 'stp_profile';
 
