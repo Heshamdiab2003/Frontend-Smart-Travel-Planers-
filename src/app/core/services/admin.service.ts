@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface OverviewStats {
   totalUsers: number;
@@ -65,7 +66,7 @@ export interface PaginatedPayments {
 @Injectable({ providedIn: 'root' })
 export class AdminService {
   private readonly http = inject(HttpClient);
-  private readonly API_BASE = 'http://localhost:5002/api/admin';
+  private readonly API_BASE = `${environment.apiUrl}/admin`;
 
   // 1. Stats Overview
   getOverviewStats(): Observable<OverviewStats> {

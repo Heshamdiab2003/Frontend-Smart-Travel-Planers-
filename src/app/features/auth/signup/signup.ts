@@ -46,12 +46,30 @@ export class SignupPage {
     }
     const { fullName, email, password, confirmPassword } = this.form.getRawValue();
     this.isLoading = true;
-    this.auth.register({ fullName, email, password, confirmPassword }).subscribe(success => {
-      this.isLoading = false;
-      if (success) {
-        this.router.navigate(['/my-trips']);
-      } else {
-        this.errorMessage = 'Registration failed. The email may already be in use.';
+    this.auth.register({ fullName, email, password, confirmPassword }).subscribe({
+      next: (userId) => {
+        this.isLoading = false;
+        if (userId) {
+          this.router.navigate(['/confirm-email'], { queryParams: { userId } });
+        } else {
+          this.errorMessage = 'Registration failed. Please check your details.';
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        let errorData = err.error;
+        if (typeof errorData === 'string') {
+          try {
+            errorData = JSON.parse(errorData);
+          } catch {
+            // Ignore parse failure
+          }
+        }
+        if (errorData?.errors && errorData.errors.length > 0) {
+          this.errorMessage = errorData.errors.join(' ');
+        } else {
+          this.errorMessage = errorData?.message || `Connection/Server Error (${err.status}: ${err.statusText || 'Server unreachable'}).`;
+        }
       }
     });
   }
