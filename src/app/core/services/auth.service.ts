@@ -59,7 +59,7 @@ export interface ConfirmEmailDto {
   token: string;
 }
 
-const API_BASE = 'http://localhost:5000/api/Auth';
+const API_BASE = 'http://localhost:5002/api/Auth';
 const SESSION_KEY = 'stp_session_email';
 const PROFILE_KEY = 'stp_profile';
 
@@ -80,6 +80,33 @@ export class AuthService {
 
   /** Whether a user is currently signed in. */
   readonly isLoggedIn = computed(() => this._email() !== null);
+
+  /** Whether the signed-in user has the Admin role. */
+  readonly isAdmin = computed(() => {
+    // Computed reacts to _email changes (login/logout)
+    const email = this._email();
+    if (!email) return false;
+    const token = this.getToken();
+    if (!token) return false;
+    try {
+      const parts = token.split('.');
+      if (parts.length < 2) return false;
+      const base64Url = parts[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      const payload = JSON.parse(jsonPayload);
+      const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+      return role === 'Admin';
+    } catch (e) {
+      console.error('Failed to parse role from token:', e);
+      return false;
+    }
+  });
 
   // -----------------------------------------------------------------------
   // Token helpers
