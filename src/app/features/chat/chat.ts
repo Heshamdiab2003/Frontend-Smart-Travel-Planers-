@@ -16,7 +16,6 @@ import { ToastService } from '../../core/services/toast.service';
 import { ChatMessage, ChatSession } from '../../core/models';
 import { TripService } from '../../core/services/trip.service';
 
-/** AI travel-assistant chat integrated with the backend API. */
 @Component({
   selector: 'app-chat',
   standalone: true,
@@ -35,8 +34,6 @@ export class ChatPage implements AfterViewChecked, OnInit, OnDestroy {
 
   newMessageText = '';
   isAssistantTyping = false;
-  isRedirecting = false;
-  isPreparingPlan = false;
 
   private renderedCount = 0;
 
@@ -51,14 +48,11 @@ export class ChatPage implements AfterViewChecked, OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Only create a new session if we don't already have one in progress
     if (this.messages.length === 0 || !this.chat.hasActiveSession()) {
       this.chat.createSession().subscribe({
         error: (err) => console.error('Failed to initialize chat session', err)
       });
     }
-
-    // Load historical sessions for the sidebar
     this.chat.loadUserSessions().subscribe();
   }
 
@@ -69,9 +63,7 @@ export class ChatPage implements AfterViewChecked, OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    // Clean up if needed
-  }
+  ngOnDestroy(): void {}
 
   sendMessage(): void {
     const text = this.newMessageText.trim();
@@ -84,11 +76,8 @@ export class ChatPage implements AfterViewChecked, OnInit, OnDestroy {
     this.chat.sendMessage(text).subscribe({
       next: (response) => {
         this.isAssistantTyping = false;
-        
+
         if (response.tripId) {
-          // The orchestrator builds the plan in the BACKGROUND. Don't redirect
-          // yet — poll GET /api/Chat/plan/{tripId} until it's persisted (200),
-          // then navigate to the trip detail page.
           this.awaitPlan(response.tripId);
         }
       },
@@ -101,22 +90,16 @@ export class ChatPage implements AfterViewChecked, OnInit, OnDestroy {
     });
   }
 
-  /**
-   * After a trip is triggered, the backend builds the plan asynchronously.
-   * Show a "preparing" state and poll until the plan is persisted (200), then
-   * redirect to its detail page. On timeout/error, keep the user in the chat
-   * (history stays intact server-side) and surface a message.
-   */
   private awaitPlan(tripId: string): void {
-    this.isPreparingPlan = true;
+    this.isAssistantTyping = true;
+
     this.tripService.pollPlan(tripId).subscribe({
       next: () => {
-        this.isPreparingPlan = false;
-        this.isRedirecting = true;
+        this.isAssistantTyping = false;
         this.router.navigate(['/my-trips', tripId]);
       },
       error: () => {
-        this.isPreparingPlan = false;
+        this.isAssistantTyping = false;
         this.chat.addSystemErrorMessage('تأخرت الخطة، حاول تاني');
         this.toast.danger('Your plan is taking longer than expected. Please try again.');
       },
@@ -125,7 +108,7 @@ export class ChatPage implements AfterViewChecked, OnInit, OnDestroy {
 
   loadHistoricalSession(sessionId: string): void {
     this.chat.loadSessionChat(sessionId).subscribe({
-      error: (err) => this.toast.danger('Failed to load chat history.')
+      error: () => this.toast.danger('Failed to load chat history.')
     });
   }
 

@@ -224,3 +224,64 @@
     min-height: 260px;
   }
 }
+
+
+/* =============================================
+   SKELETON LOADING
+   ============================================= */
+.skeleton-pulse {
+  background: linear-gradient(90deg, #f0e8e2 25%, #fdf6f0 50%, #f0e8e2 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-img {
+  height: 200px;
+  width: 100%;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 6px;
+}
+
+.skeleton-short  { width: 40%; }
+.skeleton-medium { width: 65%; }
+.skeleton-long   { width: 90%; }
+
+
+/* =============================================
+   REMOVE TRIP BUTTON
+   ============================================= */
+.btn-remove-trip {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #B54304;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .8rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  transition: all .2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.btn-remove-trip:hover {
+  background: #B54304;
+  color: #fff;
+  transform: scale(1.1);
+}

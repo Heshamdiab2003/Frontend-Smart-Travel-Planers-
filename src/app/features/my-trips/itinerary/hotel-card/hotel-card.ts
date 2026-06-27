@@ -18,4 +18,16 @@ export class HotelCard {
   getStars(count: number): number[] {
     return Array.from({ length: Math.min(5, Math.max(0, count || 0)) });
   }
+
+  /** Format ISO/date string to readable format e.g. "Aug 10, 2026" */
+  formatDate(dateStr: string): string {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }
 }

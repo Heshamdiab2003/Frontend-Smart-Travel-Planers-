@@ -5,13 +5,14 @@
     </div>
     <div class="card-body-wrap">
       <div class="card-label fw-bold text-uppercase">Flight</div>
-      <div class="card-main fw-bold text-nowrap overflow-hidden">{{ flight.airline }}</div>
-      <div class="card-sub fw-semibold">
-        {{ flight.flightNumber }}
-        <span class="mx-1 text-muted">|</span>
-        {{ flight.departureTime }} → {{ flight.arrivalTime }}
+      <div class="card-main fw-bold">{{ flight.airline }}</div>
+      <div class="card-sub fw-semibold">{{ flight.flightNumber }}</div>
+      <div class="card-times d-flex align-items-center gap-1 mt-1">
+        <span class="time-chip">{{ formatTime(flight.departureTime) }}</span>
+        <i class="fa-solid fa-arrow-right text-muted" style="font-size:.55rem;"></i>
+        <span class="time-chip">{{ formatTime(flight.arrivalTime) }}</span>
       </div>
-      <div class="card-route">
+      <div class="card-route mt-1">
         <i class="fa-solid fa-arrow-right-arrow-left me-1" style="font-size:.6rem;"></i>
         {{ flight.departure }} → {{ flight.arrival }}
       </div>

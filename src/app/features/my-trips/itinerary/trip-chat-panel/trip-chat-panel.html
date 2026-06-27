@@ -1,0 +1,80 @@
+<div class="panel-shell d-flex flex-column h-100">
+
+  <!-- Messages -->
+  <div class="panel-messages flex-grow-1 overflow-y-auto px-3 py-3" #panelScroll>
+    <div class="d-flex flex-column gap-3">
+
+      <!-- Loading State -->
+      @if (isInitializing) {
+        <div class="panel-welcome p-3 rounded-3 text-center">
+          <div class="d-flex align-items-center justify-content-center gap-2">
+            <div class="spinner-border spinner-border-sm text-primary" role="status" style="width:16px;height:16px;border-width:2px;color:var(--primary,#B54304)!important"></div>
+            <span style="font-size:0.82rem;color:#6B6B6B;font-weight:600;">جاري تحميل بيانات رحلتك…</span>
+          </div>
+        </div>
+      }
+
+      @for (msg of messages; track msg.id) {
+        <div class="panel-msg-row d-flex gap-2" [class.panel-msg-user]="msg.sender === 'user'">
+
+          @if (msg.sender === 'assistant') {
+            <div class="panel-avatar assistant-av d-inline-flex align-items-center justify-content-center flex-shrink-0">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+          }
+
+          <div class="panel-bubble"
+               [class.panel-bubble-user]="msg.sender === 'user'"
+               [class.panel-bubble-error]="msg.sender === 'system'">
+            <p class="m-0">{{ msg.text }}</p>
+          </div>
+
+          @if (msg.sender === 'user') {
+            <div class="panel-avatar user-av d-inline-flex align-items-center justify-content-center flex-shrink-0">
+              <i class="fa-solid fa-user"></i>
+            </div>
+          }
+
+        </div>
+      }
+
+      @if (isTyping) {
+        <div class="panel-msg-row d-flex gap-2">
+          <div class="panel-avatar assistant-av d-inline-flex align-items-center justify-content-center flex-shrink-0">
+            <i class="fa-solid fa-robot"></i>
+          </div>
+          <div class="panel-bubble typing-panel d-inline-flex align-items-center gap-2">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      }
+
+    </div>
+  </div>
+
+  <!-- Composer -->
+  <div class="panel-composer-wrap flex-shrink-0 border-top px-3 py-2">
+    <div class="panel-composer d-flex align-items-center gap-2 rounded-3 p-1">
+      <input
+        type="text"
+        [(ngModel)]="newMessageText"
+        (keydown.enter)="sendMessage()"
+        autocomplete="off"
+        placeholder="عدّل رحلتك…"
+        [disabled]="isInitializing"
+        class="panel-input flex-grow-1 border-0 bg-transparent px-2 fw-semibold"
+        aria-label="Send modification request"
+      />
+      <button
+        type="button"
+        class="btn panel-send d-inline-flex align-items-center justify-content-center rounded-2 border-0 flex-shrink-0"
+        (click)="sendMessage()"
+        [disabled]="!newMessageText.trim() || isTyping || isInitializing"
+        aria-label="Send"
+      >
+        <i class="fa fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+</div>

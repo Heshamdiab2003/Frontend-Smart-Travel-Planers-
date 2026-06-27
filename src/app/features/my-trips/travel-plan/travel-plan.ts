@@ -19,16 +19,17 @@ import {
 import { TripService } from '../../../core/services/trip.service';
 import { PdfExportService } from '../../../core/services/pdf-export.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { UnsplashService } from '../../../core/services/unsplash.service';
 import { FlightCard } from '../itinerary/flight-card/flight-card';
 import { HotelCard } from '../itinerary/hotel-card/hotel-card';
 import { WeatherBanner } from '../itinerary/weather-banner/weather-banner';
 import { InteractiveMap } from '../itinerary/interactive-map/interactive-map';
+import { TripChatPanel } from '../itinerary/trip-chat-panel/trip-chat-panel';
 
-/** Full itinerary view for one trip, loaded by `:id` from {@link TripService}. */
 @Component({
   selector: 'app-travel-plan',
   standalone: true,
-  imports: [NgClass, RouterLink, FlightCard, HotelCard, WeatherBanner, InteractiveMap],
+  imports: [NgClass, RouterLink, FlightCard, HotelCard, WeatherBanner, InteractiveMap, TripChatPanel], // ← أضفنا TripChatPanel
   templateUrl: './travel-plan.html',
   styleUrl: './travel-plan.css',
 })
@@ -37,12 +38,14 @@ export class TravelPlanPage implements OnInit {
   private readonly tripService = inject(TripService);
   private readonly pdfExport = inject(PdfExportService);
   private readonly toast = inject(ToastService);
+  private readonly unsplash = inject(UnsplashService);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   readonly trip = signal<UserTrip | null>(null);
   readonly notFound = signal(false);
   readonly selectedDayIndex = signal(0);
   readonly isExporting = signal(false);
+  readonly isSplitOpen = signal(false); // ← جديد: حالة الـ split view
 
   readonly currentDayPlan = computed(() => {
     const t = this.trip();
@@ -64,12 +67,24 @@ export class TravelPlanPage implements OnInit {
       return;
     }
 
-    // Fetch the real persisted itinerary (GET /api/Chat/plan/{id}).
-    // 404 / any error → show the existing "not found" state.
     this.tripService.getPlan(id).subscribe({
-      next: (dto) => this.trip.set(mapTripPlanDtoToUserTrip(dto)),
+      next: async (dto) => {
+        const mapped = mapTripPlanDtoToUserTrip(dto);
+        const coverImage = await this.unsplash.getDestinationPhoto(dto.destination);
+        this.trip.set({ ...mapped, coverImage });
+      },
       error: () => this.notFound.set(true),
     });
+  }
+
+  /** فتح الـ split view */
+  openSplit(): void {
+    this.isSplitOpen.set(true);
+  }
+
+  /** إغلاق الـ split view */
+  closeSplit(): void {
+    this.isSplitOpen.set(false);
   }
 
   selectDay(index: number): void {
@@ -85,6 +100,17 @@ export class TravelPlanPage implements OnInit {
       transport: 'cat-transport',
     };
     return map[category] ?? 'cat-attraction';
+  }
+
+  formatDate(dateStr: string): string {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
   }
 
   async exportToPDF(): Promise<void> {
@@ -105,10 +131,6 @@ export class TravelPlanPage implements OnInit {
 // ---------------------------------------------------------------------------
 // Backend (TripPlanDto) → view-model (UserTrip) mapping
 // ---------------------------------------------------------------------------
-// The backend plan shape differs from what the itinerary components expect.
-// This mapper bridges the two without changing any template. It only fills UI-only
-// fields (icon, cover image, status, day title) that the backend doesn't provide;
-// it never invents itinerary data.
 
 const CATEGORY_ICONS: Record<ActivityCategory, string> = {
   food: '🍽️',
@@ -118,7 +140,6 @@ const CATEGORY_ICONS: Record<ActivityCategory, string> = {
   transport: '🚕',
 };
 
-/** Maps a backend activity `type` string to the view-model type + category. */
 function classifyActivity(dtoType: string): { type: ActivityType; category: ActivityCategory } {
   switch ((dtoType || '').toLowerCase()) {
     case 'restaurant':
@@ -150,7 +171,6 @@ function mapActivity(a: ActivityPlanDto, dayNumber: number, index: number): Acti
     time: a.timeSlot ?? '',
     title: a.name,
     locationName: a.locationName ?? a.name,
-    // Template calls `.toFixed(4)` on lat/lng, so they MUST be numbers.
     lat: a.lat ?? 0,
     lng: a.lng ?? 0,
     description: '',
@@ -193,14 +213,6 @@ function deriveStatus(startDate: string, endDate: string): TripStatus {
 }
 
 export function mapTripPlanDtoToUserTrip(dto: TripPlanDto): UserTrip {
-  const firstActivityImage = (dto.days ?? [])
-    .flatMap((d) => d.activities ?? [])
-    .flatMap((a) => a.images ?? [])
-    .flatMap((img) => img.urls ?? [])
-    .find((url) => !!url);
-
-  const coverImage = dto.hotel?.images?.find((u) => !!u) ?? firstActivityImage ?? '';
-
   const flight: FlightInfo | undefined = dto.flight
     ? {
         airline: dto.flight.airlineName,
@@ -216,7 +228,6 @@ export function mapTripPlanDtoToUserTrip(dto: TripPlanDto): UserTrip {
     ? {
         name: dto.hotel.name,
         address: dto.hotel.address ?? '',
-        // Backend `rating` carries the star count (see Orchestrator.GetCurrentPlanAsync).
         stars: Math.round(dto.hotel.rating ?? 0),
         checkIn: dto.startDate,
         checkOut: dto.endDate,
@@ -230,7 +241,7 @@ export function mapTripPlanDtoToUserTrip(dto: TripPlanDto): UserTrip {
     from: dto.flight?.departureAirport ?? '',
     departureDate: dto.startDate,
     returnDate: dto.endDate,
-    coverImage,
+    coverImage: '',
     totalBudget: dto.budgetTotal,
     spentBudget: dto.estimatedTotalCost,
     travelStyle: [],

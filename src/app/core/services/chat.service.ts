@@ -5,9 +5,6 @@ import { tap, catchError } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 
-/**
- * Chat state and API integration for the AI itinerary planner.
- */
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   private readonly http = inject(HttpClient);
@@ -33,7 +30,6 @@ export class ChatService {
 
   createSession(): Observable<any> {
     const headers = this.getAuthHeaders();
-    // Use an empty body for POST as required by standard session creation
     return this.http.post<any>('/api/Chat/session', {}, { headers }).pipe(
       tap(session => {
         this.currentSessionId = session.sessionId;
@@ -48,16 +44,12 @@ export class ChatService {
     }
 
     const headers = this.getAuthHeaders();
-    // Assuming backend takes the message in the body as a simple string or JSON
-    // Adjust payload structure if the backend expects a different model (e.g. { message: text })
     return this.http.post<any>(
       `/api/Chat/send`,
       { sessionId: this.currentSessionId, message: text },
       { headers }
     ).pipe(
       tap(response => {
-        // TRIP_SHOW returns a backend TripPlanDto in `plan`; map it to the compact
-        // ChatItinerary shape the inline itinerary card binds to.
         this.addAssistantReply(
           response.message,
           response.plan ? this.toChatItinerary(response.plan) : undefined,
@@ -68,9 +60,21 @@ export class ChatService {
 
   loadUserSessions(): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.get<any>('/api/Chat/sessions', { headers }).pipe(
-      tap(sessions => this.history = sessions),
-      catchError(err => { console.error('Failed to load sessions', err); return of([]); })
+    return this.http.get<ChatSession[]>('/api/Chat/sessions', { headers }).pipe(
+      tap(sessions => {
+        this.history = sessions;
+        // حفظ كل tripId موجود في localStorage عشان My Trips تلاقيه
+        const tripIds = sessions
+          .filter(s => !!s.tripId)
+          .map(s => s.tripId as string);
+        if (tripIds.length > 0) {
+          localStorage.setItem('userTripIds', JSON.stringify(tripIds));
+        }
+      }),
+      catchError(err => {
+        console.error('Failed to load sessions', err);
+        return of([]);
+      })
     );
   }
 
@@ -79,8 +83,6 @@ export class ChatService {
     return this.http.get<any>(`/api/Chat/history/${sessionId}`, { headers }).pipe(
       tap(messages => {
         this.currentSessionId = sessionId;
-        // Map backend ChatMessage entities ({ role, content, createdAt }) to the UI
-        // model ({ sender, text, time }) so restored history renders as chat bubbles.
         this._messages.set((messages ?? []).map((m: any) => this.mapHistoryMessage(m)));
       })
     );
@@ -89,33 +91,19 @@ export class ChatService {
   reset(): void {
     this.currentSessionId = null;
     this._messages.set([]);
-    // Automatically create a new session
     this.createSession().subscribe({
       error: (err) => console.error('Failed to create session:', err)
     });
   }
 
   private getAuthHeaders(): HttpHeaders {
-    // Dynamically and synchronously read the active token from localStorage
     const token = localStorage.getItem('token');
-    
-    console.log('DEBUG: Token retrieved from storage is:', token);
-    
-    let headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
-    
+    let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     if (token && token.trim() !== '') {
-      // Ensure strict Bearer schema prefix format
       headers = headers.set('Authorization', `Bearer ${token.trim()}`);
-    } else {
-      console.warn('DEBUG: No valid token found in storage. Skipping Authorization header injection.');
     }
-    
     return headers;
   }
-
-  // --- internals ---
 
   addUserMessage(text: string): void {
     this.append({
@@ -146,11 +134,6 @@ export class ChatService {
     });
   }
 
-  /**
-   * Maps the backend `TripPlanDto` (returned inline by the TRIP_SHOW flow) to the
-   * compact `ChatItinerary` the inline card binds to. Field names differ:
-   * dayNumber→dayNum, ActivityPlanDto[]→string[] (names), budgetTotal→budget string.
-   */
   private toChatItinerary(plan: TripPlanDto): ChatItinerary {
     return {
       destination: plan.destination,
@@ -191,8 +174,6 @@ export class ChatService {
     return `${hours}:${minutes} ${ampm}`;
   }
 
-  // --- history mapping (backend ChatMessage entity → UI ChatMessage) ---
-
   private mapHistoryMessage(m: any): ChatMessage {
     return {
       id: String(m?.id ?? this.nextId()),
@@ -202,7 +183,6 @@ export class ChatService {
     };
   }
 
-  /** Backend MessageRole enum: 0=User, 1=Assistant, 2=System, 3=Tool (serialized as number). */
   private mapRole(role: any): 'user' | 'assistant' | 'system' {
     const r = typeof role === 'string' ? role.toLowerCase() : role;
     if (r === 0 || r === 'user') return 'user';
@@ -212,7 +192,6 @@ export class ChatService {
 
   private formatTimeFrom(iso: string | null | undefined): string {
     if (!iso) return this.currentTime();
-    // Backend stores UTC without a 'Z' suffix; treat a naive timestamp as UTC.
     const hasTz = /[zZ]|[+-]\d\d:?\d\d$/.test(iso);
     const d = new Date(hasTz ? iso : iso + 'Z');
     if (isNaN(d.getTime())) return this.currentTime();
