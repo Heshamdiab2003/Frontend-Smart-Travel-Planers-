@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService, ResetPasswordDto } from '../../../core/services/auth.service';
@@ -18,11 +18,69 @@ export class ResetPasswordPage implements OnInit {
 
   email = '';
   token = ''; // this is now the OTP
+  otpDigits: string[] = ['', '', '', '', '', ''];
   newPassword = '';
   confirmPassword = '';
   errorMessage = '';
   isSuccess = false;
   isLoading = false;
+  showNewPassword = false;
+  showConfirmPassword = false;
+
+  toggleNewPassword(): void {
+    this.showNewPassword = !this.showNewPassword;
+  }
+
+  toggleConfirmPassword(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  @ViewChildren('otpInput') otpInputs!: QueryList<ElementRef<HTMLInputElement>>;
+
+  onOtpInput(event: KeyboardEvent, index: number): void {
+    const input = event.target as HTMLInputElement;
+    const key = event.key;
+    
+    // Allow navigation
+    if (key === 'ArrowLeft' && index > 0) {
+      this.otpInputs.get(index - 1)?.nativeElement.focus();
+      return;
+    }
+    if (key === 'ArrowRight' && index < 5) {
+      this.otpInputs.get(index + 1)?.nativeElement.focus();
+      return;
+    }
+
+    if (key === 'Backspace') {
+      if (!input.value && index > 0) {
+        this.otpDigits[index - 1] = '';
+        this.otpInputs.get(index - 1)?.nativeElement.focus();
+      }
+      return;
+    }
+
+    if (/^[0-9]$/.test(key) && index < 5) {
+      setTimeout(() => {
+        this.otpInputs.get(index + 1)?.nativeElement.focus();
+      }, 10);
+    }
+  }
+
+  onOtpPaste(event: ClipboardEvent): void {
+    event.preventDefault();
+    const pastedData = event.clipboardData?.getData('text');
+    if (!pastedData) return;
+
+    const digits = pastedData.replace(/[^0-9]/g, '').split('');
+    for (let i = 0; i < 6; i++) {
+      if (digits[i]) {
+        this.otpDigits[i] = digits[i];
+      }
+    }
+    
+    const nextIndex = Math.min(digits.length, 5);
+    this.otpInputs.get(nextIndex)?.nativeElement.focus();
+  }
 
   ngOnInit(): void {
     this.email = this.route.snapshot.queryParams['email'] || '';
@@ -34,6 +92,7 @@ export class ResetPasswordPage implements OnInit {
 
   submit(): void {
     this.errorMessage = '';
+    this.token = this.otpDigits.join('');
 
     if (!this.token || this.token.length !== 6) {
       this.errorMessage = 'Please enter the 6-digit code sent to your email.';

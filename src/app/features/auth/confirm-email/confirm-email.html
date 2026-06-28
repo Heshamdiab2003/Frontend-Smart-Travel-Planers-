@@ -1,71 +1,110 @@
-<div class="confirm-wrapper d-flex align-items-center justify-content-center min-vh-100">
-  <div class="confirm-card text-center p-5 rounded-4 shadow-sm mx-3">
-    <!-- Brand -->
-    <a routerLink="/" class="text-decoration-none">
-      <h2 class="font-serif brand-logo mb-4">TripMind</h2>
+<div class="split-layout d-flex w-100">
+  
+  <!-- Left Side: Hero Text -->
+  <div class="hero-side d-none d-lg-flex flex-column justify-content-center p-5 position-relative">
+    <a routerLink="/" class="position-absolute top-0 start-0 p-4 brand-logo d-flex align-items-center gap-2 text-white text-decoration-none fw-bold fs-5 font-sans">
+      <div class="logo-dot" style="border-color: white;"></div>
+      TripMind
     </a>
 
-    @if (status === 'success') {
-      <!-- Success State -->
-      <div class="status-icon-box mx-auto mb-4 d-flex align-items-center justify-content-center rounded-circle success-box">
-        <i class="fa-solid fa-circle-check text-white fs-2"></i>
+    <div class="hero-content mx-auto" style="max-width: 500px;">
+      <div class="badge-pill mb-4 d-inline-flex align-items-center gap-2">
+        <i class="fa-solid fa-wand-magic-sparkles text-accent"></i>
+        <span class="text-uppercase small fw-bold tracking-wider opacity-75">AI Travel Concierge</span>
       </div>
-      <h3 class="fw-bold text-deep font-serif mb-3">Email Confirmed!</h3>
-      <p class="text-muted fs-6 lh-lg mb-4">
-        Your email address has been verified successfully. Redirecting to login...
-      </p>
-      <a routerLink="/login" class="btn btn-confirm w-100 py-2 rounded-3 fw-bold border-0 text-decoration-none">
-        Sign In Now
-      </a>
-    } @else {
-      <!-- Form State -->
-      <div class="status-icon-box mx-auto mb-4 d-flex align-items-center justify-content-center rounded-circle email-box" style="background: linear-gradient(135deg, var(--color-accent), #f18e9a);">
-        <i class="fa-solid fa-envelope-open-text text-white fs-2"></i>
-      </div>
-      <h3 class="fw-bold text-deep font-serif mb-2">Check Your Email</h3>
-      <p class="text-muted fs-6 lh-lg mb-4">
-        We've sent a 6-digit verification code to your email. Please enter it below.
+      
+      <h1 class="display-4 fw-bold text-white mb-4 lh-sm font-sans">
+        One last step.
+      </h1>
+      
+      <p class="text-white fs-5 mb-5 lh-lg opacity-75">
+        Secure your account to ensure your itineraries are safe and synced across all your devices.
       </p>
 
-      @if (status === 'error' && errorMessage) {
-        <div class="alert alert-danger py-2 mb-4" role="alert">
-          {{ errorMessage }}
+      <div class="d-flex align-items-center gap-3 opacity-50">
+        <hr class="flex-grow-1 border-light-white m-0">
+        <span class="text-uppercase small tracking-wider text-white">12,400+ Adventurers</span>
+        <hr class="flex-grow-1 border-light-white m-0">
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side: Auth Form -->
+  <div class="form-side d-flex flex-column justify-content-center align-items-center p-4 position-relative">
+    
+    <div class="position-absolute top-0 start-0 w-100 p-4 d-flex justify-content-between align-items-center">
+      <a routerLink="/" class="brand-logo d-flex align-items-center gap-2 text-deep text-decoration-none fw-bold fs-5 font-sans d-lg-none">
+        <div class="logo-dot"></div>
+        TripMind
+      </a>
+    </div>
+
+    <div class="auth-card w-100 mx-auto text-center" style="max-width: 440px;">
+      
+      @if (status === 'success') {
+        <div class="mx-auto mb-4 d-flex align-items-center justify-content-center rounded-circle" style="width:64px;height:64px;background:rgba(181, 67, 4, 0.1);color:var(--primary-orange, #B54304);">
+          <i class="fa-solid fa-circle-check fs-2"></i>
+        </div>
+        <h3 class="h3 text-deep fw-bold mb-2">Email Confirmed!</h3>
+        <p class="text-muted small mb-4">
+          Your email address has been verified successfully. Redirecting...
+        </p>
+        <a routerLink="/login" class="btn btn-primary-accent w-100 py-3 rounded-3 fw-bold border-0 text-decoration-none">
+          Sign In Now
+        </a>
+      } @else {
+        <div class="mx-auto mb-4 d-flex align-items-center justify-content-center rounded-circle" style="width:64px;height:64px;background:rgba(61, 43, 47, 0.05);color:var(--secondary-dark, #3D2B2F);">
+          <i class="fa-solid fa-envelope-open-text fs-2"></i>
+        </div>
+        <h3 class="h3 text-deep fw-bold mb-2">Check Your Email</h3>
+        <p class="text-muted small mb-4">
+          We've sent a 6-digit verification code to your email.
+        </p>
+
+        @if (status === 'error' && errorMessage) {
+          <div class="alert alert-danger d-flex align-items-center gap-2 rounded-3 py-2 px-3 mb-4 text-start" role="alert">
+            <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+            <span class="small">{{ errorMessage }}</span>
+          </div>
+        }
+
+        <form (ngSubmit)="submit()" class="text-start">
+          <div class="form-group mb-4">
+            <label class="form-label text-uppercase tracking-wider small text-muted mb-3 d-block text-center">6-Digit Code</label>
+            <div class="d-flex justify-content-center gap-2 mb-2" (paste)="onOtpPaste($event)">
+              @for (digit of otpDigits; track $index) {
+                <input type="text"
+                  #otpInput
+                  class="form-control custom-input otp-input"
+                  maxlength="1"
+                  [(ngModel)]="otpDigits[$index]"
+                  name="otp_{{$index}}"
+                  (keyup)="onOtpInput($event, $index)"
+                  autocomplete="off">
+              }
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary-accent w-100 py-3 rounded-3 fw-bold border-0" [disabled]="status === 'loading'">
+            @if (status === 'loading') {
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Verifying...
+            } @else {
+              Verify Email
+            }
+          </button>
+        </form>
+
+        <div class="text-center mt-4">
+          <span class="text-muted small">Didn't receive the code? </span>
+          <button (click)="resend()" class="btn btn-link text-accent text-decoration-none small fw-bold p-0" [disabled]="!userId || resendMessage === 'Sending...'">
+            Resend Code
+          </button>
+          @if (resendMessage) {
+            <p class="text-success small mt-2 fw-semibold">{{ resendMessage }}</p>
+          }
         </div>
       }
-
-      <form [formGroup]="form" (ngSubmit)="submit()">
-        <div class="form-floating mb-4">
-          <input 
-            type="text" 
-            class="form-control text-center fs-4 fw-bold letter-spacing-md" 
-            id="otpInput" 
-            placeholder="123456" 
-            formControlName="otp"
-            maxlength="6"
-            [class.is-invalid]="f.otp.invalid && (f.otp.dirty || f.otp.touched)"
-          >
-          <label for="otpInput">6-Digit Code</label>
-        </div>
-
-        <button type="submit" class="btn btn-confirm w-100 py-2 rounded-3 fw-bold border-0" [disabled]="form.invalid || status === 'loading'">
-          @if (status === 'loading') {
-            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            Verifying...
-          } @else {
-            Verify Email
-          }
-        </button>
-      </form>
-
-      <div class="mt-4">
-        <p class="text-muted mb-2">Didn't receive the code?</p>
-        <button (click)="resend()" class="btn btn-link text-accent fw-bold text-decoration-none p-0" [disabled]="!userId || resendMessage === 'Sending...'">
-          Resend Code
-        </button>
-        @if (resendMessage) {
-          <p class="text-success small mt-2 fw-semibold">{{ resendMessage }}</p>
-        }
-      </div>
-    }
+    </div>
   </div>
 </div>

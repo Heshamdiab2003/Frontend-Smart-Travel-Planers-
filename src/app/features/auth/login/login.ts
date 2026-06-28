@@ -24,6 +24,15 @@ export class LoginPage implements OnInit {
   errorMessage = '';
   isLoading = false;
   returnUrl = '/my-trips';
+  showPassword = false;
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  loginWithGoogle(): void {
+    this.auth.initiateGoogleLogin();
+  }
 
   ngOnInit(): void {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/my-trips';

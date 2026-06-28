@@ -187,8 +187,8 @@ textarea,
 }
 
 .form-check-input:checked {
-  background-color: var(--primary-orange);
-  border-color: var(--primary-orange);
+  background-color: var(--primary-brand) !important;
+  border-color: var(--primary-brand) !important;
 }
 
 /* ── Accent Color Tokens ───────────────────────────────────── */
@@ -343,4 +343,133 @@ header,
 @keyframes skeleton-shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   AUTH SPLIT-SCREEN LAYOUT (Global override for all auth pages)
+   Applied globally to avoid Angular ViewEncapsulation conflicts.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.split-layout {
+  font-family: 'Plus Jakarta Sans', 'Inter', Arial, sans-serif;
+  min-height: 100dvh;
+  display: flex !important;
+}
+
+.hero-side {
+  flex: 1.1;
+  background: var(--primary-brand) !important;
+  background-image: var(--primary-gradient) !important;
+  color: #fff !important;
+}
+.hero-side * { color: #fff !important; }
+.hero-side .text-accent { color: var(--primary-orange) !important; }
+
+.form-side {
+  flex: 0.9;
+  background-color: var(--body-bg) !important;
+  color: var(--secondary-dark) !important;
+}
+
+.auth-card {
+  max-width: 440px;
+  background-color: #fff !important;
+  border-radius: 24px;
+  padding: 2.5rem;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-md) !important;
+  color: var(--secondary-dark) !important;
+}
+.auth-card h1, .auth-card h2, .auth-card h3,
+.auth-card h4, .auth-card label, .auth-card p {
+  color: var(--secondary-dark) !important;
+}
+
+.custom-input {
+  background-color: #fff !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px !important;
+  color: var(--secondary-dark) !important;
+}
+.custom-input::placeholder { color: #a3978f !important; }
+.custom-input:focus {
+  background-color: #fff !important;
+  border-color: var(--primary-orange) !important;
+  box-shadow: var(--focus-ring) !important;
+  color: var(--secondary-dark) !important;
+}
+
+.btn-primary-accent {
+  background: var(--trip-gradient) !important;
+  background-size: 200% auto !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: var(--shadow-brand) !important;
+}
+.btn-primary-accent:hover:not(:disabled) {
+  background-position: right center !important;
+  transform: translateY(-2px) !important;
+  color: #fff !important;
+}
+.btn-primary-accent:disabled {
+  background: var(--border-color) !important;
+  color: var(--text-muted) !important;
+  box-shadow: none !important;
+}
+
+.otp-input {
+  text-align: center !important;
+  font-weight: bold !important;
+  font-size: 1.5rem !important;
+  max-width: 50px !important;
+  height: 54px !important;
+  padding: 0 !important;
+}
+
+.eye-btn {
+  background: none !important;
+  border: none !important;
+  color: var(--text-muted) !important;
+}
+.eye-btn:hover { color: var(--secondary-dark) !important; }
+
+.badge-pill {
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 6px 16px;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.08);
+}
+
+.border-light-white { border-color: rgba(255,255,255,0.15) !important; }
+
+@media (max-width: 992px) {
+  .hero-side { display: none !important; }
+  .form-side { flex: 1 !important; }
+  .auth-card {
+    padding: 2rem !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ── Google OAuth Button ─────────────────────────────────── */
+.btn-google {
+  background-color: #ffffff !important;
+  color: var(--secondary-dark) !important;
+  border-color: var(--border-color) !important;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+.btn-google:hover {
+  background-color: #f8f3ef !important;
+  border-color: var(--primary-brand) !important;
+  color: var(--secondary-dark) !important;
+  box-shadow: 0 4px 12px rgba(116, 52, 27, 0.12) !important;
+  transform: translateY(-1px);
+}
+.btn-google:active {
+  transform: translateY(0);
 }
