@@ -5,16 +5,22 @@
     </div>
     <div class="card-body-wrap">
       <div class="card-label fw-bold text-uppercase">Hotel</div>
-      <div class="card-main fw-bold text-nowrap overflow-hidden">{{ hotel.name }}</div>
+      <div class="card-main fw-bold">{{ hotel.name }}</div>
       <div class="card-sub fw-semibold">
         @for (s of getStars(hotel.stars); track $index) {
           <i class="fa-solid fa-star star-icon"></i>
         }
         <span class="ms-1">· {{ hotel.rating }}/10</span>
       </div>
-      <div class="card-route">
-        <i class="fa-regular fa-calendar-check me-1" style="font-size:.6rem;"></i>
-        {{ hotel.checkIn }} – {{ hotel.checkOut }}
+      <div class="card-dates mt-2 d-flex flex-column gap-1">
+        <div class="date-row d-flex align-items-center gap-2">
+          <span class="date-badge check-in">Check-in</span>
+          <span class="date-val">{{ formatDate(hotel.checkIn) }}</span>
+        </div>
+        <div class="date-row d-flex align-items-center gap-2">
+          <span class="date-badge check-out">Check-out</span>
+          <span class="date-val">{{ formatDate(hotel.checkOut) }}</span>
+        </div>
       </div>
     </div>
   </div>

@@ -26,4 +26,5 @@ export interface ChatSession {
   id: string;
   title: string;
   date: string;
+  tripId?: string | null;
 }

@@ -43,13 +43,28 @@
 .card-main {
   font-size: .92rem;
   color: var(--text-deep, #261814);
+  /* removed text-nowrap — allow wrapping */
+  overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .card-sub {
   font-size: .73rem;
   color: var(--primary, #B54304);
-  margin-top: 3px;
+  margin-top: 2px;
+}
+
+.card-times {
+  flex-wrap: wrap;
+}
+
+.time-chip {
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--text-deep, #261814);
+  background: #f5ede7;
+  border-radius: 6px;
+  padding: 2px 7px;
 }
 
 .card-route {

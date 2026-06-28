@@ -3,12 +3,13 @@
    ══════════════════════════════════════════════════════════════════════════════ */
 .hero-banner {
   background-size: cover;
-  background-position: center;
+  background-position: center top;   /* ← كانت center بس، دلوقتي top عشان الصورة متزومش */
+  background-attachment: scroll;     /* ← يمنع الـ parallax zoom effect */
   border-bottom: 1px solid #e8ddd6;
 }
 
 .hero-container {
-  min-height: 280px;
+  min-height: 300px;
 }
 
 .back-link {
@@ -42,6 +43,41 @@
 .hero-subtitle {
   color: rgba(255, 255, 255, 0.85);
   font-size: 1.05rem;
+}
+
+/* Hero date chips */
+.hero-date-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 3px 10px;
+  font-size: 0.82rem;
+  color: #fff;
+  font-weight: 500;
+}
+
+.hero-date-chip .chip-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.hero-dates-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.hero-dates-sep {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.75rem;
 }
 
 .btn-pdf-export {
@@ -83,6 +119,31 @@
 
 .budget-progress-bar .progress-bar {
   background: var(--primary, #B54304);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   INFO CARDS ROW (Flight / Hotel / Weather)
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* الـ row بتاع الكارتين يخلي كل كارت يتمدد بالتساوي */
+.info-cards-row {
+  display: flex;
+  align-items: stretch;   /* ← كل الكارتين بنفس الارتفاع */
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.info-cards-row > * {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+/* الـ summary-card اللي جوا كل component يملا الارتفاع */
+.info-cards-row app-flight-card .summary-card,
+.info-cards-row app-hotel-card .summary-card,
+.info-cards-row app-weather-banner > * {
+  height: 100%;
+  max-width: 100%;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -201,12 +262,11 @@
   transition: all 0.2s ease;
 }
 
-/* Category-specific styling for timeline tracks */
-.timeline-item.cat-food .tl-dot { border-color: #a53015; background: #fffcfb; }
+.timeline-item.cat-food .tl-dot       { border-color: #a53015; background: #fffcfb; }
 .timeline-item.cat-attraction .tl-dot { border-color: #3D2B2F; background: #faf9f9; }
-.timeline-item.cat-leisure .tl-dot { border-color: #c46030; background: #fffbf9; }
-.timeline-item.cat-hotel .tl-dot { border-color: #B54304; background: #fffbf5; }
-.timeline-item.cat-transport .tl-dot { border-color: #6B6B6B; background: #fcfcfc; }
+.timeline-item.cat-leisure .tl-dot    { border-color: #c46030; background: #fffbf9; }
+.timeline-item.cat-hotel .tl-dot      { border-color: #B54304; background: #fffbf5; }
+.timeline-item.cat-transport .tl-dot  { border-color: #6B6B6B; background: #fcfcfc; }
 
 .activity-card {
   background: #ffffff;
@@ -243,7 +303,6 @@
   font-family: monospace;
 }
 
-/* Category Badges */
 .cat-badge {
   font-size: 0.65rem;
   letter-spacing: 0.7px;
@@ -251,11 +310,11 @@
   border-radius: 4px;
 }
 
-.cat-badge-food        { background: rgba(165, 48, 21, 0.08); color: #a53015; }
-.cat-badge-attraction  { background: rgba(61, 43, 47, 0.08); color: #3D2B2F; }
-.cat-badge-leisure     { background: rgba(196, 96, 48, 0.08); color: #c46030; }
-.cat-badge-hotel       { background: rgba(181, 67, 4, 0.08); color: #B54304; }
-.cat-badge-transport   { background: rgba(107, 107, 107, 0.08); color: #6B6B6B; }
+.cat-badge-food        { background: rgba(165, 48, 21, 0.08);  color: #a53015; }
+.cat-badge-attraction  { background: rgba(61, 43, 47, 0.08);   color: #3D2B2F; }
+.cat-badge-leisure     { background: rgba(196, 96, 48, 0.08);  color: #c46030; }
+.cat-badge-hotel       { background: rgba(181, 67, 4, 0.08);   color: #B54304; }
+.cat-badge-transport   { background: rgba(107, 107, 107, 0.08);color: #6B6B6B; }
 
 /* ══════════════════════════════════════════════════════════════════════════════
    STICKY INTERACTIVE MAP CONTAINER
@@ -282,13 +341,13 @@
   border-radius: 4px;
 }
 
-.skeleton-short { width: 50px; }
+.skeleton-short  { width: 50px; }
 .skeleton-medium { width: 130px; }
-.skeleton-long { width: 190px; }
+.skeleton-long   { width: 190px; }
 
 @keyframes skeleton-blink {
-  0% { opacity: .5; }
-  50% { opacity: 1; }
+  0%   { opacity: .5; }
+  50%  { opacity: 1; }
   100% { opacity: .5; }
 }
 
@@ -297,15 +356,22 @@
   border: 1px dashed #d4c5b7;
 }
 
+/* ══════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 992px) {
   .sticky-map-wrapper {
     position: relative;
     top: 0;
     margin-top: 40px;
   }
-  
+
   .map-view-box {
     height: 400px;
+  }
+
+  .info-cards-row {
+    flex-wrap: wrap;
   }
 }
 
@@ -313,30 +379,196 @@
   .timeline-item {
     grid-template-columns: 55px 36px 1fr;
   }
-  
+
   .tl-time-col {
     padding-right: 2px;
   }
-  
+
   .activity-time {
     font-size: 0.65rem;
   }
-  
+
   .tl-connector {
     margin-right: 17px;
   }
-  
+
   .tl-dot {
     width: 26px;
     height: 26px;
     font-size: 0.85rem;
   }
-  
+
   .activity-card {
     padding: 12px 14px;
   }
-  
+
   .hero-title {
     font-size: 2.2rem;
+  }
+
+  .info-cards-row {
+    flex-direction: column;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SPLIT VIEW LAYOUT
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.split-shell {
+  display: flex;
+  flex-direction: row;   /* رحلة شمال، شات يمين */
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+/* الرحلة دايمًا على الشمال */
+.split-trip-panel {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+/* الشات على اليمين لما يتفتح */
+.split-shell.split-active .split-chat-panel {
+  flex: 0 0 33.333%;
+  width: 33.333%;
+  min-width: 320px;
+  max-width: 420px;
+  border-left: 1px solid #e8ddd6;   /* ← border على الشمال عشان هو على اليمين */
+  background: #fffaf5;
+  height: calc(100vh - 56px);
+  position: sticky;
+  top: 56px;
+  overflow: hidden;
+  order: 2;   /* ← يجي بعد الرحلة */
+}
+
+.split-trip-panel {
+  order: 1;   /* ← الرحلة الأول */
+}
+
+/* ── Chat Panel Header ─────────────────────────────────────── */
+.split-chat-header {
+  border-bottom: 1px solid #e8ddd6;
+  background: #ffffff;
+  min-height: 52px;
+}
+
+.split-chat-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.92rem;
+  color: var(--primary, #B54304);
+}
+
+.btn-close-split {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #e8ddd6;
+  background: #ffffff;
+  color: #6B6B6B;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.btn-close-split:hover {
+  background: #fdf0eb;
+  border-color: var(--primary, #B54304);
+  color: var(--primary, #B54304);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   FLOATING CHAT BUTTON (FAB)
+   ══════════════════════════════════════════════════════════════════════════════ */
+.btn-chat-fab {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 999;
+
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+
+  background: var(--primary, #B54304);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(181, 67, 4, 0.38), 0 2px 8px rgba(0,0,0,0.12);
+
+  font-size: 1.35rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.btn-chat-fab:hover {
+  transform: translateY(-4px) scale(1.06);
+  box-shadow: 0 14px 32px rgba(181, 67, 4, 0.48), 0 4px 12px rgba(0,0,0,0.14);
+}
+
+.btn-chat-fab .fab-label {
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  line-height: 1;
+}
+
+/* pulse ring animation */
+.btn-chat-fab::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(181, 67, 4, 0.35);
+  animation: fab-pulse 2s ease-in-out infinite;
+}
+
+@keyframes fab-pulse {
+  0%   { transform: scale(1);    opacity: 0.8; }
+  50%  { transform: scale(1.18); opacity: 0.2; }
+  100% { transform: scale(1);    opacity: 0.8; }
+}
+
+/* ── Responsive split ─────────────────────────────────────── */
+@media (max-width: 992px) {
+  .split-shell.split-active {
+    flex-direction: column;
+  }
+
+  .split-shell.split-active .split-chat-panel {
+    flex: 0 0 45vh;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 45vh;
+    position: relative;
+    top: 0;
+    border-left: none;
+    border-top: 1px solid #e8ddd6;   /* ← على موبايل يبقي تحت الرحلة */
+    order: 2;
+  }
+
+  .split-trip-panel {
+    order: 1;
+  }
+
+  .btn-chat-fab {
+    bottom: 24px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    font-size: 1.15rem;
   }
 }
