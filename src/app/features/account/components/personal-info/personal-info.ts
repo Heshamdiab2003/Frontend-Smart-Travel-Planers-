@@ -3,9 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { UserProfile } from '../../../../core/models';
 import { ToastService } from '../../../../core/services/toast.service';
 
-/** Maximum avatar upload size (2 MB) before client-side rejection. */
-const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
-
 /** Editable personal-information form. Emits the saved profile to its parent. */
 @Component({
   selector: 'app-personal-info',
@@ -27,32 +24,5 @@ export class PersonalInfo {
     }
     this.saveProfile.emit({ ...this.userProfile });
     this.toast.success('Personal information updated.');
-  }
-
-  onAvatarFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      this.toast.danger('Please choose an image file.');
-      return;
-    }
-    if (file.size > MAX_AVATAR_BYTES) {
-      this.toast.danger('Image is too large (max 2 MB).');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result;
-      if (typeof result === 'string') {
-        this.userProfile = { ...this.userProfile, avatarUrl: result };
-        this.saveProfile.emit({ ...this.userProfile });
-        this.toast.success('Profile photo updated.');
-      }
-    };
-    reader.onerror = () => this.toast.danger('Could not read the selected image.');
-    reader.readAsDataURL(file);
   }
 }

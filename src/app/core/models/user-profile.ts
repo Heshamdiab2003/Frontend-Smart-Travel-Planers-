@@ -5,6 +5,6 @@ export interface UserProfile {
   email: string;
   phone: string;
   country: string;
-  /** Avatar image URL or base64 data URL. */
-  avatarUrl: string;
+  currentPlan?: string;
+  emailConfirmed?: boolean;
 }

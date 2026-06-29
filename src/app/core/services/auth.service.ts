@@ -35,9 +35,20 @@ export interface AuthResponseDto {
 /** Maps to backend UserProfileDto (GET /api/Auth/me) */
 export interface UserProfileDto {
   userId: string;
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   emailConfirmed: boolean;
+  phoneNumber?: string;
+  country?: string;
+  currentPlan?: string;
+}
+
+export interface UpdateProfileDto {
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
+  country?: string;
 }
 
 /** Maps to backend ForgotPasswordDto */
@@ -244,6 +255,7 @@ export class AuthService {
     this.safeRemove('refreshToken');
     this.safeRemove(SESSION_KEY);
     this.safeRemove(PROFILE_KEY);
+    this.safeRemove('userTripIds');
     this.router.navigate(['/login']);
   }
 
@@ -312,6 +324,17 @@ export class AuthService {
       catchError(err => {
         console.error('Failed to fetch current user:', err);
         return of(null);
+      }),
+    );
+  }
+
+  updateProfile(dto: UpdateProfileDto): Observable<boolean> {
+    const headers = this.getAuthHeaders();
+    return this.http.put(`${API_BASE}/me`, dto, { headers }).pipe(
+      map(() => true),
+      catchError(err => {
+        console.error('Failed to update profile:', err);
+        return of(false);
       }),
     );
   }

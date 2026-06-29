@@ -1,49 +1,53 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { UserProfile } from '../models';
-
-const PROFILE_KEY = 'stp_profile';
+import { AuthService } from './auth.service';
 
 const DEFAULT_PROFILE: UserProfile = {
-  firstName: 'Mohamed',
-  lastName: 'Elhosinii',
-  email: 'mohamed@example.com',
-  phone: '+20 123 456 7890',
-  country: 'Egypt',
-  avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop',
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  country: '',
+  currentPlan: 'Loading...'
 };
 
 /**
- * Owns the signed-in user's profile. Reads/writes `localStorage` so edits
- * survive a refresh while there is no backend.
+ * Owns the signed-in user's profile. Interacts with AuthService to fetch and update.
  */
 @Injectable({ providedIn: 'root' })
 export class UserProfileService {
-  private readonly _profile = signal<UserProfile>(this.restore());
+  private readonly auth = inject(AuthService);
+  private readonly _profile = signal<UserProfile>(DEFAULT_PROFILE);
 
   /** The current profile (read-only signal). */
   readonly profile = this._profile.asReadonly();
 
-  /** Persist a full profile update. */
+  loadFromApi(): void {
+    this.auth.getCurrentUser().subscribe(dto => {
+      if (dto) {
+        this._profile.set({
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          email: dto.email,
+          phone: dto.phoneNumber || '',
+          country: dto.country || '',
+          currentPlan: dto.currentPlan,
+          emailConfirmed: dto.emailConfirmed
+        });
+      }
+    });
+  }
+
+  /** Persist a full profile update to backend. */
   update(profile: UserProfile): void {
     const next = { ...profile };
     this._profile.set(next);
-    this.persist(next);
-  }
-
-  private restore(): UserProfile {
-    try {
-      const raw = localStorage.getItem(PROFILE_KEY);
-      return raw ? { ...DEFAULT_PROFILE, ...JSON.parse(raw) } : { ...DEFAULT_PROFILE };
-    } catch {
-      return { ...DEFAULT_PROFILE };
-    }
-  }
-
-  private persist(profile: UserProfile): void {
-    try {
-      localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
-    } catch {
-      /* storage unavailable — keep in-memory only */
-    }
+    
+    this.auth.updateProfile({
+      firstName: next.firstName,
+      lastName: next.lastName,
+      phoneNumber: next.phone,
+      country: next.country
+    }).subscribe();
   }
 }

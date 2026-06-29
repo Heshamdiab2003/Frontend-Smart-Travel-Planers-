@@ -7,11 +7,18 @@
     <div class="col-lg-3">
       <!-- Quick User Card -->
       <div class="card border-0 shadow-sm rounded-4 p-4 text-center mb-4 bg-white">
-        <div class="position-relative d-inline-block mx-auto mb-3">
-          <img [src]="userProfile.avatarUrl" alt="Profile avatar" class="rounded-circle object-fit-cover shadow-sm border border-3 border-white" style="width: 100px; height: 100px;">
+        <div class="position-relative d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-circle shadow-sm border border-3 border-white mx-auto mb-3 fw-bold fs-2" style="width: 100px; height: 100px;">
+          {{ userInitials }}
         </div>
         <h5 class="fw-bold text-deep mb-1">{{ userProfile.firstName }} {{ userProfile.lastName }}</h5>
-        <p class="text-muted small mb-0"><i class="fa-solid fa-location-dot me-1"></i>{{ userProfile.country }}</p>
+        <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
+          <p class="text-muted small mb-0"><i class="fa-solid fa-location-dot me-1"></i>{{ userProfile.country || 'Not set' }}</p>
+        </div>
+        <div>
+          <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill small fw-semibold">
+            <i class="fa-solid fa-crown me-1"></i> {{ userProfile.currentPlan || 'Free Plan' }}
+          </span>
+        </div>
       </div>
 
       <!-- Navigation List -->

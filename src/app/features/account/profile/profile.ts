@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, effect } from '@angular/core';
 import { Navbar } from '../../../layout/navbar/navbar';
 import { PersonalInfo } from '../components/personal-info/personal-info';
 import { PasswordForm } from '../components/password-form/password-form';
@@ -13,7 +13,7 @@ import { UserProfileService } from '../../../core/services/user-profile.service'
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
-export class ProfilePage {
+export class ProfilePage implements OnInit {
   private readonly profileService = inject(UserProfileService);
 
   activeTab: 'personal' | 'security' = 'personal';
@@ -21,9 +21,27 @@ export class ProfilePage {
   /** Working copy handed to the editable form (keeps service state immutable). */
   editableProfile: UserProfile = { ...this.profileService.profile() };
 
+  constructor() {
+    effect(() => {
+      // Sync working copy when API data loads
+      this.editableProfile = { ...this.profileService.profile() };
+    });
+  }
+
+  ngOnInit(): void {
+    this.profileService.loadFromApi();
+  }
+
   /** Live profile for the sidebar summary. */
   get userProfile(): UserProfile {
     return this.profileService.profile();
+  }
+
+  get userInitials(): string {
+    const f = this.userProfile.firstName?.charAt(0) || '';
+    const l = this.userProfile.lastName?.charAt(0) || '';
+    const initials = (f + l).toUpperCase();
+    return initials || '?';
   }
 
   setActiveTab(tab: 'personal' | 'security'): void {

@@ -1,24 +1,8 @@
 <div>
   <h4 class="fw-bold text-deep mb-2">Personal Information</h4>
-  <p class="text-muted small mb-4">Manage your basic account details and upload your profile picture.</p>
+  <p class="text-muted small mb-4">Manage your basic account details and personal information.</p>
   
   <form (ngSubmit)="onSubmit()">
-    <!-- Avatar Upload Placeholder Section -->
-    <div class="d-flex align-items-center gap-4 mb-4 pb-4 border-bottom">
-      <div class="avatar-upload-container position-relative">
-        <img [src]="userProfile.avatarUrl" alt="Avatar Preview" class="rounded-circle object-fit-cover shadow-sm border border-2 border-white" style="width: 100px; height: 100px;">
-        <label for="avatarFileInput" class="avatar-overlay position-absolute top-0 start-0 w-100 h-100 rounded-circle d-flex flex-column align-items-center justify-content-center cursor-pointer opacity-0">
-          <i class="fa-solid fa-camera text-white fs-4 mb-1"></i>
-          <span class="text-white text-uppercase fw-bold" style="font-size: 0.65rem; letter-spacing: 0.5px;">Upload</span>
-        </label>
-        <input type="file" id="avatarFileInput" class="d-none" accept="image/*" (change)="onAvatarFileChange($event)">
-      </div>
-      <div>
-        <h6 class="fw-bold text-deep mb-1">Avatar Image</h6>
-        <p class="text-muted small mb-0">Tap to upload a new profile picture. Supports JPG, PNG.</p>
-      </div>
-    </div>
-
     <!-- Fields -->
     <div class="row g-3">
       <div class="col-md-6">
