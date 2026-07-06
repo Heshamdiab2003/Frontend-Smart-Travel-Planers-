@@ -9,56 +9,7 @@
     </div>
 
     <div class="card mx-auto p-4 p-md-5 rounded-4 shadow-sm border-0">
-<<<<<<< Updated upstream
-
-      <form class="form" [formGroup]="form" (ngSubmit)="submit()">
-
-      <!-- FROM / TO -->
-      <div class="from-to">
-        <div class="row g-3">
-
-          <div class="col-12 col-md-6">
-            <div class="form__group d-flex flex-column gap-2">
-              <label class="fw-bold small">From</label>
-              <div class="input-icon position-relative">
-                <i class="fa-solid fa-plane-departure icon position-absolute"></i>
-                <input type="text" formControlName="from" placeholder="Cairo, Egypt" class="w-100 fw-medium">
-              </div>
-            </div>
-            @if (form.get('from')?.touched && form.get('from')?.invalid) {
-              <div class="text-danger small mt-1">Please enter your departure city</div>
-            }
-          </div>
-
-          <div class="col-12 col-md-6">
-            <div class="form__group d-flex flex-column gap-2">
-              <label class="fw-bold small">To</label>
-              <div class="input-icon position-relative">
-                <i class="fa-solid fa-plane-arrival icon position-absolute"></i>
-                <input type="text" formControlName="to" placeholder="Paris, France" class="w-100 fw-medium">
-              </div>
-            </div>
-            @if (form.get('to')?.touched && form.get('to')?.invalid) {
-              <div class="text-danger small mt-1">Tell us your destination to plan your trip</div>
-            }
-          </div>
-
-        </div>
-      </div>
-      
-      <!-- DATES -->
-      <div class="dates mt-4">
-        <div class="row g-3">
-
-     <div class="col-12 col-md-6">
-  <div class="form__group d-flex flex-column gap-2">
-    <label class="fw-bold small">Departure</label>
-    <div class="input-icon position-relative">
-      <i class="fa-solid fa-calendar-days icon position-absolute"></i>
-      <input type="date" formControlName="departureDate" class="w-100 fw-medium">
-=======
       <app-trip-planner-form></app-trip-planner-form>
->>>>>>> Stashed changes
     </div>
 
   </div>

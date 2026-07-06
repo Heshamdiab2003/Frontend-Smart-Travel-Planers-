@@ -275,20 +275,11 @@ export class AuthService {
 
     // Immediate client-side cleanup regardless of server response
     this._email.set(null);
-<<<<<<< Updated upstream
-    localStorage.removeItem('token');
-    this.safeRemove('refreshToken');
-    this.safeRemove(SESSION_KEY);
-    this.safeRemove(PROFILE_KEY);
-    this.safeRemove('userTripIds');
-    this.router.navigate(['/login']);
-=======
     storage.remove(STORAGE_KEYS.token);
     storage.remove(STORAGE_KEYS.refreshToken);
     storage.remove(STORAGE_KEYS.sessionEmail);
     storage.remove(STORAGE_KEYS.profile);
     this.router.navigate([APP_ROUTES.login]);
->>>>>>> Stashed changes
   }
 
   // -----------------------------------------------------------------------

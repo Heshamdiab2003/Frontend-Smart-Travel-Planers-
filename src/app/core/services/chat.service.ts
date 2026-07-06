@@ -1,7 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ChatItinerary, ChatMessage, ChatSession, TripPlanDto } from '../models';
-import { tap, catchError } from 'rxjs/operators';
+import { tap, catchError, switchMap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { ENDPOINTS } from '../config/endpoints';
@@ -45,21 +45,11 @@ export class ChatService {
     const headers = this.auth.getAuthHeaders();
     return this.http.post<any>(ENDPOINTS.chat.session, {}, { headers }).pipe(
       tap((session) => {
-<<<<<<< Updated upstream
-        this.currentSessionId = session.sessionId;
-        this._messages.set([this.welcomeMessage()]);
-=======
         this._activeSessionId.set(session.sessionId);
->>>>>>> Stashed changes
       }),
     );
   }
 
-<<<<<<< Updated upstream
-  sendMessage(text: string): Observable<any> {
-    if (!this.currentSessionId) {
-      throw new Error('No active chat session. Please start a new journey.');
-=======
   initLocalSession(): void {
     this._activeSessionId.set(null);
     this._currentTripId.set(null);
@@ -71,15 +61,12 @@ export class ChatService {
       return this.createSession().pipe(
         switchMap(() => this.doSendMessage(text))
       );
->>>>>>> Stashed changes
     }
+    return this.doSendMessage(text);
+  }
 
-<<<<<<< Updated upstream
-    const headers = this.getAuthHeaders();
-=======
   private doSendMessage(text: string): Observable<any> {
     const headers = this.auth.getAuthHeaders();
->>>>>>> Stashed changes
     return this.http
       .post<any>(ENDPOINTS.chat.send, { sessionId: this._activeSessionId(), message: text }, { headers })
       .pipe(
@@ -102,16 +89,7 @@ export class ChatService {
     const headers = this.auth.getAuthHeaders();
     return this.http.get<ChatSession[]>(ENDPOINTS.chat.sessions, { headers }).pipe(
       tap((sessions) => {
-<<<<<<< Updated upstream
-        this.history = sessions;
-        // حفظ كل tripId موجود في localStorage عشان My Trips تلاقيه
-        const tripIds = sessions.filter((s) => !!s.tripId).map((s) => s.tripId as string);
-        if (tripIds.length > 0) {
-          localStorage.setItem('userTripIds', JSON.stringify(tripIds));
-        }
-=======
         this._history.set(sessions ?? []);
->>>>>>> Stashed changes
       }),
       catchError((err) => {
         console.error('Failed to load sessions', err);
@@ -137,16 +115,7 @@ export class ChatService {
   }
 
   reset(): void {
-<<<<<<< Updated upstream
-    this.currentSessionId = null;
-    this._currentTripId.set(null); // ← اعمليها null عند reset
-    this._messages.set([]);
-    this.createSession().subscribe({
-      error: (err) => console.error('Failed to create session:', err),
-    });
-=======
     this.initLocalSession();
->>>>>>> Stashed changes
   }
 
   addUserMessage(text: string): void {

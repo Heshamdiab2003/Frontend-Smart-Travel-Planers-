@@ -2,9 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, throwError, timer, forkJoin } from 'rxjs';
 import { catchError, concatMap, first, take, map, switchMap } from 'rxjs/operators';
-<<<<<<< Updated upstream
-import { TripCreateDto, TripPlanDto, UserTrip } from '../models';
-=======
 import {
   ConfirmDestinationResponse,
   ResolveDestinationResponse,
@@ -14,7 +11,6 @@ import {
   UserTrip,
   TripSummaryDto,
 } from '../models';
->>>>>>> Stashed changes
 import { mapTripPlanDtoToUserTrip } from '../../features/my-trips/travel-plan/travel-plan';
 import { ENDPOINTS } from '../config/endpoints';
 
@@ -36,26 +32,9 @@ export class TripService {
   private readonly http = inject(HttpClient);
 
   /**
-   * جيب كل trips اليوزر من الـ API عن طريق الـ tripIds
-   * المحفوظة في localStorage من الـ sessions.
+   * Fetch all trips for the authenticated user from the backend.
    */
   getAllFromApi(): Observable<UserTrip[]> {
-<<<<<<< Updated upstream
-    const stored = localStorage.getItem('userTripIds');
-    const tripIds: string[] = stored ? JSON.parse(stored) : [];
-
-    if (tripIds.length === 0) return of([]);
-
-    const requests = tripIds.map(id =>
-      this.getPlan(id).pipe(
-        map(dto => mapTripPlanDtoToUserTrip(dto)),
-        catchError(() => of(null))
-      )
-    );
-
-    return forkJoin(requests).pipe(
-      map(results => results.filter((t): t is UserTrip => t !== null))
-=======
     return this.http.get<TripSummaryDto[]>(ENDPOINTS.trip.base).pipe(
       map(dtos => dtos.map(dto => ({
         id: dto.id,
@@ -71,7 +50,6 @@ export class TripService {
         days: [], // Day details are not fetched in the summary
         status: toTripStatus(dto.status),
       } as UserTrip)))
->>>>>>> Stashed changes
     );
   }
 
@@ -99,8 +77,6 @@ export class TripService {
       first((plan): plan is TripPlanDto => !!plan && plan.days.length > 0),
     );
   }
-<<<<<<< Updated upstream
-=======
 
   resolveDestination(query: string): Observable<ResolveDestinationResponse> {
     return this.http.post<ResolveDestinationResponse>(ENDPOINTS.places.resolve, { query });
@@ -109,5 +85,4 @@ export class TripService {
   confirmDestination(destId: string, resolvedName: string): Observable<ConfirmDestinationResponse> {
     return this.http.post<ConfirmDestinationResponse>(ENDPOINTS.places.confirm, { destId, resolvedName });
   }
->>>>>>> Stashed changes
 }

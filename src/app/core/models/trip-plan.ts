@@ -57,6 +57,20 @@ export interface DayPlanDto {
   weather?: DayWeatherDto | null;
 }
 
+export interface TripSummaryDto {
+  id: string;
+  destination: string;
+  country?: string;
+  originCity: string;
+  startDate: string;
+  endDate: string;
+  coverImage?: string;
+  budgetTotal: number;
+  budgetSpent: number;
+  travelStyle: string[];
+  status: string;
+}
+
 export interface TripPlanDto {
   tripId: string;
   destination: string;
@@ -105,6 +119,8 @@ export interface ConfirmDestinationResponse {
  */
 export interface TripCreateDto {
   destination: string;
+  destId?: string | null;
+  destType?: string | null;
   originCity?: string | null;
   startDate: string; // yyyy-MM-dd
   endDate: string;   // yyyy-MM-dd

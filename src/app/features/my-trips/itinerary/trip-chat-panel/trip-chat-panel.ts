@@ -110,7 +110,7 @@ export class TripChatPanel implements OnInit, AfterViewChecked, OnDestroy {
       .subscribe({
         next: (res) => {
           this.panelSessionId = res.sessionId;
-          this.loadWelcomeMessage();
+          this.loadHistory(res.sessionId);
         },
         error: () => {
           this.isInitializing = false;
@@ -150,8 +150,6 @@ export class TripChatPanel implements OnInit, AfterViewChecked, OnDestroy {
       });
   }
 
-<<<<<<< Updated upstream
-=======
   private loadHistory(sessionId: string): void {
     this.http
       .get<HistoryItem[]>(ENDPOINTS.chat.history(sessionId), { headers: this.auth.getAuthHeaders() })
@@ -178,7 +176,6 @@ export class TripChatPanel implements OnInit, AfterViewChecked, OnDestroy {
       });
   }
 
->>>>>>> Stashed changes
   sendMessage(): void {
     const text = this.newMessageText.trim();
     if (!text || this.isTyping || !this.panelSessionId) return;
@@ -268,9 +265,6 @@ export class TripChatPanel implements OnInit, AfterViewChecked, OnDestroy {
     const el = this.panelScroll?.nativeElement;
     if (el) el.scrollTop = el.scrollHeight;
   }
-<<<<<<< Updated upstream
-}
-=======
 
   private mapRole(role: string | number): 'user' | 'assistant' | 'system' {
     const r = typeof role === 'string' ? role.toLowerCase() : role;
@@ -291,4 +285,3 @@ export class TripChatPanel implements OnInit, AfterViewChecked, OnDestroy {
     return `${hours}:${minutes} ${ampm}`;
   }
 }
->>>>>>> Stashed changes

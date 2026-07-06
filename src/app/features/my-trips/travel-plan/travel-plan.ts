@@ -10,10 +10,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgClass, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-<<<<<<< Updated upstream
-=======
 import { HttpClient } from '@angular/common/http';
->>>>>>> Stashed changes
 import {
   Activity,
   ActivityCategory,
@@ -42,6 +39,16 @@ import { InteractiveMap } from '../itinerary/interactive-map/interactive-map';
 import { TripChatPanel } from '../itinerary/trip-chat-panel/trip-chat-panel';
 import { GenerationLoader } from '../../../shared/generation-loader/generation-loader';
 
+export interface PlaceSuggestion {
+  fsqPlaceId: string;
+  name: string;
+  category: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  images: string[];
+}
+
 @Component({
   selector: 'app-travel-plan',
   standalone: true,
@@ -69,6 +76,7 @@ export class TravelPlanPage implements OnInit {
   private readonly pdfExport = inject(PdfExportService);
   private readonly toast = inject(ToastService);
   private readonly unsplash = inject(UnsplashService);
+  private readonly http = inject(HttpClient);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   readonly trip = signal<UserTrip | null>(null);
@@ -77,7 +85,9 @@ export class TravelPlanPage implements OnInit {
   readonly isGenerating = signal(false);
   readonly selectedDayIndex = signal(0);
   readonly isExporting = signal(false);
-  readonly isSplitOpen = signal(false); // ← جديد: حالة الـ split view
+  readonly isSplitOpen = signal(false);
+  readonly suggestions = signal<PlaceSuggestion[]>([]);
+  readonly isSuggestionsLoading = signal(false);
 
   readonly currentDayPlan = computed(() => {
     const t = this.trip();
@@ -134,15 +144,9 @@ export class TravelPlanPage implements OnInit {
     const source$ = poll ? this.tripService.pollPlan(id) : this.tripService.getPlan(id);
     source$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: async (dto) => {
-<<<<<<< Updated upstream
-        const mapped = mapTripPlanDtoToUserTrip(dto);
-        const coverImage = await this.unsplash.getDestinationPhoto(dto.destination);
-        this.trip.set({ ...mapped, coverImage });
-=======
         await this.setTripFromDto(dto);
         this.isGenerating.set(false);
         this.loadSuggestions(id);
->>>>>>> Stashed changes
       },
       error: () => {
         if (poll) {
@@ -166,11 +170,6 @@ export class TravelPlanPage implements OnInit {
     });
   }
 
-<<<<<<< Updated upstream
-  /** فتح الـ split view */
-  openSplit(): void {
-    this.isSplitOpen.set(true);
-=======
   /**
    * Map a plan DTO into the view model and render it immediately, then fetch the
    * cover image and patch it in without blocking the itinerary (FE-13).
@@ -203,17 +202,39 @@ export class TravelPlanPage implements OnInit {
         },
         error: () => this.isSuggestionsLoading.set(false),
       });
->>>>>>> Stashed changes
   }
 
-  /** إغلاق الـ split view */
-  closeSplit(): void {
-    this.isSplitOpen.set(false);
+  getCategoryIcon(category: string): string {
+    const icons: Record<string, string> = {
+      'Restaurant': '🍽️',
+      'Cafe': '☕',
+      'Museum': '🏛️',
+      'Park': '🌿',
+      'Shopping Mall': '🛍️',
+      'Movie Theater': '🎬',
+      'Theater': '🎭',
+      'Mosque': '🕌',
+      'Church': '⛪',
+      'Historic and Protected Site': '🏰',
+      'Pastry Shop': '🥐',
+      'Dessert Shop': '🍰',
+      'Hotel': '🏨',
+      'Art Museum': '🎨',
+      'Beach': '🏖️',
+    };
+    return icons[category] ?? '📍';
   }
 
-  selectDay(index: number): void {
-    this.selectedDayIndex.set(index);
+  openInMaps(lat: number, lng: number, name: string): void {
+    const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_name=${encodeURIComponent(name)}`;
+    window.open(url, '_blank');
   }
+
+
+
+  openSplit(): void { this.isSplitOpen.set(true); }
+  closeSplit(): void { this.isSplitOpen.set(false); }
+  selectDay(index: number): void { this.selectedDayIndex.set(index); }
 
   getCategoryClass(category: string): string {
     const map: Record<string, string> = {
@@ -231,16 +252,13 @@ export class TravelPlanPage implements OnInit {
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return dateStr;
     return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
+      month: 'short', day: 'numeric', year: 'numeric',
     });
   }
 
   async exportToPDF(): Promise<void> {
     const t = this.trip();
     if (!this.isBrowser || !t || this.isExporting()) return;
-
     this.isExporting.set(true);
     try {
       await this.pdfExport.exportTrip(t);
@@ -251,25 +269,14 @@ export class TravelPlanPage implements OnInit {
     }
   }
   onTripUpdated(): void {
-  const id = this.route.snapshot.paramMap.get('id');
-  if (!id) return;
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) return;
 
-<<<<<<< Updated upstream
-  this.tripService.getPlan(id).subscribe({
-    next: async (dto) => {
-      const mapped = mapTripPlanDtoToUserTrip(dto);
-      const coverImage = await this.unsplash.getDestinationPhoto(dto.destination);
-      this.trip.set({ ...mapped, coverImage });
-    },
-  });
-
-=======
     // The AI panel edits the same trip in-place; re-fetch quietly (no full-page
     // loader) so the itinerary updates without a jarring reload.
     this.tripService.getPlan(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (dto) => this.setTripFromDto(dto),
     });
->>>>>>> Stashed changes
   }
 }
 
@@ -360,24 +367,26 @@ function deriveStatus(startDate: string, endDate: string): TripStatus {
 export function mapTripPlanDtoToUserTrip(dto: TripPlanDto): UserTrip {
   const flight: FlightInfo | undefined = dto.flight
     ? {
-        airline: dto.flight.airlineName,
-        flightNumber: dto.flight.flightNumber,
-        departure: dto.flight.departureAirport,
-        arrival: dto.flight.arrivalAirport,
-        departureTime: dto.flight.departureTime,
-        arrivalTime: dto.flight.arrivalTime,
-      }
+      airline: dto.flight.airlineName,
+      flightNumber: dto.flight.flightNumber,
+      departure: dto.flight.departureAirport,
+      arrival: dto.flight.arrivalAirport,
+      departureTime: dto.flight.departureTime,
+      arrivalTime: dto.flight.arrivalTime,
+    }
     : undefined;
 
   const hotel: HotelInfo | undefined = dto.hotel
     ? {
-        name: dto.hotel.name,
-        address: dto.hotel.address ?? '',
-        stars: Math.round(dto.hotel.rating ?? 0),
-        checkIn: dto.startDate,
-        checkOut: dto.endDate,
-        rating: dto.hotel.rating ?? 0,
-      }
+      name: dto.hotel.name,
+      address: dto.hotel.address ?? '',
+      stars: Math.round(dto.hotel.rating ?? 0),
+      checkIn: dto.startDate,
+      checkOut: dto.endDate,
+      rating: dto.hotel.rating ?? 0,
+      pricePerNight: dto.hotel.pricePerNight,
+      images: dto.hotel.images ?? [],
+    }
     : undefined;
 
   return {
@@ -395,5 +404,5 @@ export function mapTripPlanDtoToUserTrip(dto: TripPlanDto): UserTrip {
     flight,
     hotel,
   };
- 
+
 }
