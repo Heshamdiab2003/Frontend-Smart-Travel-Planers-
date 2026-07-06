@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { HotelInfo } from '../../../../core/models';
 import { ENDPOINTS } from '../../../../core/config/endpoints';
 
@@ -12,8 +13,80 @@ import { ENDPOINTS } from '../../../../core/config/endpoints';
   styleUrl: './hotel-card.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HotelCard {
+export class HotelCard implements OnInit, OnDestroy {
   @Input() hotel: HotelInfo | null | undefined = null;
+
+  private readonly http = inject(HttpClient);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  isLoadingLinks = false;
+  currentImageIndex = 0;
+  private autoPlayInterval: any;
+
+  ngOnInit(): void {
+    this.startAutoPlay();
+  }
+
+  ngOnDestroy(): void {
+    this.stopAutoPlay();
+  }
+
+  startAutoPlay(): void {
+    if (this.hotel?.images && this.hotel.images.length > 1) {
+      this.autoPlayInterval = setInterval(() => {
+        this.nextImage();
+      }, 4000);
+    }
+  }
+
+  stopAutoPlay(): void {
+    if (this.autoPlayInterval) {
+      clearInterval(this.autoPlayInterval);
+    }
+  }
+
+  nextImage(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+      this.stopAutoPlay(); // Stop autoplay if user manually interacts
+    }
+    if (this.hotel?.images?.length) {
+      this.currentImageIndex = (this.currentImageIndex + 1) % this.hotel.images.length;
+      this.cdr.markForCheck();
+    }
+  }
+
+  prevImage(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+      this.stopAutoPlay();
+    }
+    if (this.hotel?.images?.length) {
+      this.currentImageIndex = (this.currentImageIndex - 1 + this.hotel.images.length) % this.hotel.images.length;
+      this.cdr.markForCheck();
+    }
+  }
+
+  goToImage(index: number, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+      this.stopAutoPlay();
+    }
+    this.currentImageIndex = index;
+    this.cdr.markForCheck();
+  }
+
+  onImageError(index: number): void {
+    if (this.hotel?.images) {
+      // Remove the broken image
+      this.hotel.images.splice(index, 1);
+      // Adjust index if we went out of bounds
+      if (this.currentImageIndex >= this.hotel.images.length) {
+        this.currentImageIndex = Math.max(0, this.hotel.images.length - 1);
+      }
+      this.cdr.markForCheck();
+    }
+  }
 
   /** Array sized to the (0–5 clamped) star rating, for rendering star icons. */
   getStars(count: number): number[] {
@@ -31,8 +104,6 @@ export class HotelCard {
       year: 'numeric',
     });
   }
-<<<<<<< Updated upstream
-=======
 
   loadBookingLinks(): void {
     if (!this.hotel) return;
@@ -64,5 +135,4 @@ export class HotelCard {
       }
     });
   }
->>>>>>> Stashed changes
 }
