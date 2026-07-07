@@ -7,6 +7,6 @@
 export const environment = {
   production: true,
   apiUrl: 'http://tripmindai.runasp.net/api',
-  websiteUrl: 'http://tripmindai.runasp.net',
+  websiteUrl: 'https://frontend-smart-travel-planers.vercel.app',
   unsplashAccessKey: 'Bzkr7dhaRA_5FehtPNuhT0cvORCxQObkqC_Krhg30k8',
 };
