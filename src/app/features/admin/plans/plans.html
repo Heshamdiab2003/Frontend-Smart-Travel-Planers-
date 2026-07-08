@@ -52,11 +52,11 @@
         </div>
 
         <div class="plan-actions">
-          <button (click)="openEditModal(plan)" class="btn btn-sm btn-outline-dark">
+          <button class="btn btn-sm btn-outline-primary" (click)="openEditModal(plan)">
             <i class="fa fa-edit"></i> Edit
           </button>
-          <button (click)="deletePlan(plan)" class="btn btn-sm btn-outline-danger">
-            <i class="fa fa-trash-alt"></i> Delete
+          <button class="btn btn-sm btn-outline-danger" (click)="openDeleteModal(plan)">
+            <i class="fa fa-trash"></i> Delete
           </button>
         </div>
       </div>
@@ -166,6 +166,31 @@
             <button type="submit" class="btn btn-primary">Save Plan</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Delete Confirmation Modal -->
+@if (showDeleteModal && planToDelete) {
+  <div class="modal-backdrop fade show"></div>
+  <div class="modal fade show custom-modal" style="display: block;" tabindex="-1" role="dialog" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content text-center delete-modal-content">
+        <div class="modal-body p-5">
+          <div class="delete-icon-wrapper mb-4">
+            <i class="fa fa-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+          </div>
+          <h3 class="mb-3">Delete Plan?</h3>
+          <p class="text-muted mb-4">
+            Are you sure you want to delete the plan <strong>"{{ planToDelete.name }}"</strong>? 
+            This action cannot be undone and may affect active subscriptions.
+          </p>
+          <div class="d-flex justify-content-center gap-3">
+            <button type="button" class="btn btn-light px-4" (click)="closeDeleteModal()">Cancel</button>
+            <button type="button" class="btn btn-danger px-4" (click)="confirmDelete()">Yes, Delete it</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

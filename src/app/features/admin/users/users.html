@@ -58,17 +58,7 @@
               <td>{{ user.email }}</td>
               <td>{{ user.createdAt | date:'shortDate' }}</td>
               <td>
-                <select 
-                  class="form-select plan-select-sm" 
-                  [value]="user.planId" 
-                  [disabled]="updatingUserId === user.userId"
-                  (change)="changePlan(user, $event)"
-                >
-                  <option value="">No Active Plan</option>
-                  @for (plan of plans; track plan.id) {
-                    <option [value]="plan.id">{{ plan.name }}</option>
-                  }
-                </select>
+                <span class="plan-name">{{ user.planName || 'No Active Plan' }}</span>
               </td>
               <td>
                 <span class="badge" [class.bg-success]="!user.isBanned" [class.bg-danger]="user.isBanned">
