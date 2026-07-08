@@ -20,8 +20,10 @@ export class Plans implements OnInit {
   
   // Modal / Form state
   showModal = false;
+  showDeleteModal = false;
   isEditMode = false;
   selectedPlanId: string | null = null;
+  planToDelete: PlanDto | null = null;
 
   // Form Fields
   planForm: CreatePlanDto = {
@@ -127,18 +129,30 @@ export class Plans implements OnInit {
     }
   }
 
-  deletePlan(plan: PlanDto) {
-    if (!confirm(`Are you sure you want to delete the plan "${plan.name}"?`)) return;
+  openDeleteModal(plan: PlanDto) {
+    this.planToDelete = plan;
+    this.showDeleteModal = true;
+  }
 
-    this.adminService.deletePlan(plan.id).subscribe({
+  closeDeleteModal() {
+    this.showDeleteModal = false;
+    this.planToDelete = null;
+  }
+
+  confirmDelete() {
+    if (!this.planToDelete) return;
+
+    this.adminService.deletePlan(this.planToDelete.id).subscribe({
       next: (res) => {
         this.toast.success(res.message || 'Plan deleted successfully.');
+        this.closeDeleteModal();
         this.loadPlans();
       },
       error: (err) => {
         console.error('Failed to delete plan:', err);
         // Error handling if active subscriptions are attached
         this.toast.danger('Failed to delete plan. Active subscriptions might be attached to it.');
+        this.closeDeleteModal();
       }
     });
   }
