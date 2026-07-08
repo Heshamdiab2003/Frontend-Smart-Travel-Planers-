@@ -153,7 +153,8 @@ export class SubscriptionPage implements OnInit, OnDestroy {
         console.error('Cancel failed:', err);
         this.cancelling.set(false);
         this.showCancelConfirm.set(false);
-        this.toast.danger('Could not cancel the subscription. Please try again.');
+        const errorMsg = err.error?.message || 'Could not cancel the subscription. Please try again.';
+        this.toast.danger(errorMsg);
       },
     });
   }
