@@ -176,17 +176,17 @@
   <div class="modal-backdrop fade show"></div>
   <div class="modal fade show custom-modal" style="display: block;" tabindex="-1" role="dialog" aria-modal="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content text-center delete-modal-content">
-        <div class="modal-body p-5">
-          <div class="delete-icon-wrapper mb-4">
-            <i class="fa fa-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+      <div class="modal-content text-center delete-modal-content border-0 shadow-lg">
+        <div class="modal-body p-4">
+          <div class="delete-icon-wrapper mb-3">
+            <i class="fa fa-exclamation-triangle text-warning" style="font-size: 2.5rem;"></i>
           </div>
-          <h3 class="mb-3">Delete Plan?</h3>
-          <p class="text-muted mb-4">
+          <h4 class="mb-2" style="font-weight: 600;">Delete Plan?</h4>
+          <p class="text-muted mb-4" style="font-size: 0.95rem;">
             Are you sure you want to delete the plan <strong>"{{ planToDelete.name }}"</strong>? 
             This action cannot be undone and may affect active subscriptions.
           </p>
-          <div class="d-flex justify-content-center gap-3">
+          <div class="d-flex justify-content-center gap-2">
             <button type="button" class="btn btn-light px-4" (click)="closeDeleteModal()">Cancel</button>
             <button type="button" class="btn btn-danger px-4" (click)="confirmDelete()">Yes, Delete it</button>
           </div>
