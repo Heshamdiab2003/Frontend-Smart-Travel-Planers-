@@ -1,6 +1,7 @@
 import { DayPlan } from './day-plan';
 import { FlightInfo } from './flight-info';
 import { HotelInfo } from './hotel-info';
+import { Weather } from './weather';
 
 export type TripStatus = 'upcoming' | 'ongoing' | 'completed';
 
@@ -20,4 +21,5 @@ export interface UserTrip {
   status: TripStatus;
   flight?: FlightInfo;
   hotel?: HotelInfo;
+  weather?: Weather[];
 }

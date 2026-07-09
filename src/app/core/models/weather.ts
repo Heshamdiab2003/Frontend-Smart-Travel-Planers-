@@ -11,4 +11,7 @@ export interface Weather {
   iconUrl: string;
   /** Short AI-generated packing/planning tip for the day. */
   aiTip: string;
+  humidity?: number;
+  precipProb?: number;
 }
+

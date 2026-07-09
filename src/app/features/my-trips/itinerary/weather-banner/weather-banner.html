@@ -1,48 +1,140 @@
-@if (weather) {
+@if (weatherList && weatherList.length > 0) {
+  @let selectedW = currentSelectedWeather;
   <div
-    class="weather-banner d-flex flex-wrap align-items-center justify-content-between gap-3 position-relative overflow-hidden"
-    [ngClass]="getWeatherClass(weather.condition)"
+    class="weather-card-container d-flex flex-column h-100 position-relative overflow-hidden"
+    [ngClass]="getWeatherClass(selectedW?.condition)"
   >
+    <!-- Top Header section -->
+    <div class="weather-header d-flex flex-column mb-3">
+      <h3 class="destination-title mb-0 fw-bold">
+        {{ destination }}<span class="country-suffix fw-normal">, {{ country || 'Destination' }}</span>
+      </h3>
+      <span class="updated-timestamp text-muted">Updated {{ lastUpdatedTime }}</span>
+    </div>
 
-    <!-- Left: icon + temperature + condition pill -->
-    <div class="d-flex align-items-center gap-3 weather-left">
-      <img
-        [src]="weather.iconUrl"
-        [alt]="weather.condition + ' weather icon'"
-        class="weather-icon flex-shrink-0"
-        (error)="$any($event.target).style.display='none'"
-        width="54" height="54"
-      />
-      <div>
-        <!-- Temperature display -->
-        <div class="d-flex align-items-baseline gap-1 weather-temp-row">
-          <span class="temp-max">{{ weather.tempMax }}°C</span>
-          <span class="temp-sep fw-normal">/</span>
-          <span class="temp-min fw-medium">{{ weather.tempMin }}°C</span>
+    <!-- Main Selected Weather details -->
+    @if (selectedW) {
+      <div class="current-weather-row d-flex align-items-center justify-content-between gap-3 mb-3">
+        <div class="d-flex align-items-center gap-3">
+          <img
+            [src]="selectedW.iconUrl"
+            [alt]="selectedW.condition"
+            class="main-weather-icon flex-shrink-0"
+            (error)="$any($event.target).style.display='none'"
+            width="64" height="64"
+          />
+          <div class="d-flex flex-column">
+            <div class="d-flex align-items-baseline gap-1 main-temp-row">
+              <span class="main-temp-c fw-bold">{{ round(selectedW.tempMax) }}°C</span>
+              <span class="main-temp-sep text-muted">/</span>
+              <span class="main-temp-f text-muted fw-medium">{{ toFahrenheit(selectedW.tempMax) }}°F</span>
+            </div>
+            <span class="main-condition-text fw-semibold mt-1">{{ selectedW.condition }}</span>
+          </div>
         </div>
-        <span class="weather-pill mt-1 d-inline-block fw-semibold">{{ weather.condition }}</span>
+
+        <div class="d-flex align-items-center gap-2 main-stats">
+          @if (selectedW.humidity !== undefined) {
+            <span class="stat-pill d-inline-flex align-items-center gap-1">
+              <i class="fa-solid fa-droplet text-primary"></i> {{ round(selectedW.humidity) }}%
+            </span>
+          }
+          @if (selectedW.precipProb !== undefined) {
+            <span class="stat-pill d-inline-flex align-items-center gap-1">
+              <i class="fa-solid fa-umbrella text-info"></i> {{ round(selectedW.precipProb) }}%
+            </span>
+          }
+        </div>
       </div>
+    }
+
+    <!-- Divider line -->
+    <hr class="weather-divider my-2" />
+
+    <!-- Forecast list scroll container -->
+    <div class="forecast-list d-flex flex-column gap-1 flex-grow-1 overflow-y-auto mb-3 pr-1">
+      @for (w of weatherList; track w.date; let idx = $index) {
+        <div
+          class="forecast-row d-flex align-items-center justify-content-between px-3 py-2 rounded-3"
+          [class.active]="idx === selectedDayIndex"
+          (click)="selectDay(idx)"
+        >
+          <!-- Left side: Icon + Date + Condition -->
+          <div class="d-flex align-items-center gap-2 min-w-0">
+            <img
+              [src]="w.iconUrl"
+              [alt]="w.condition"
+              class="forecast-icon flex-shrink-0"
+              (error)="$any($event.target).style.display='none'"
+              width="36" height="36"
+            />
+            <div class="d-flex flex-column min-w-0">
+              <span class="forecast-date fw-bold text-truncate">{{ w.date | date:'EEE, MMM d' }}</span>
+              <span class="forecast-condition text-muted text-truncate">{{ w.condition }}</span>
+            </div>
+          </div>
+
+          <!-- Right side: Temperature + Rain probability -->
+          <div class="d-flex align-items-center gap-3 flex-shrink-0">
+            <div class="forecast-temps text-end">
+              <span class="max-t fw-bold">{{ round(w.tempMax) }}°</span>
+              <span class="min-t text-muted ms-1">{{ round(w.tempMin) }}°</span>
+            </div>
+            @if (w.precipProb !== undefined) {
+              <span class="precip-pill d-inline-flex align-items-center gap-1">
+                <i class="fa-solid fa-umbrella text-info"></i> {{ round(w.precipProb) }}%
+              </span>
+            }
+          </div>
+        </div>
+      }
     </div>
 
-    <!-- Right: AI tip box -->
-    <div class="weather-tip-box d-flex align-items-start">
-      <i class="fa-solid fa-lightbulb tip-bulb-icon flex-shrink-0"></i>
-      <p class="tip-text mb-0 fst-italic">{{ weather.aiTip }}</p>
-    </div>
+    <!-- AI tip box at bottom -->
+    @if (selectedW) {
+      <div class="weather-tip-box d-flex align-items-start mt-auto">
+        <i class="fa-solid fa-lightbulb tip-bulb-icon flex-shrink-0"></i>
+        <p class="tip-text mb-0 fst-italic">{{ getAiTip(selectedW) }}</p>
+      </div>
+    }
   </div>
 } @else if (isGenerating) {
-  <div class="weather-banner weather-default d-flex flex-wrap align-items-center justify-content-between gap-3 loading-banner position-relative overflow-hidden w-100 mb-0">
-    <div class="d-flex align-items-center gap-3 weather-left w-100">
-      <div class="weather-icon skeleton-circle skeleton-pulse rounded-circle flex-shrink-0"></div>
-      <div class="flex-grow-1">
-        <div class="skeleton-line skeleton-medium skeleton-pulse mb-2"></div>
-        <div class="skeleton-line skeleton-short skeleton-pulse"></div>
-      </div>
+  <div class="weather-card-container weather-default d-flex flex-column h-100 loading-banner p-4">
+    <!-- Header skeleton -->
+    <div class="mb-3">
+      <div class="skeleton-line skeleton-medium skeleton-pulse mb-2" style="height: 24px;"></div>
+      <div class="skeleton-line skeleton-short skeleton-pulse"></div>
     </div>
-    <div class="weather-tip-box w-100 skeleton-pulse mt-2 d-flex align-items-start" style="height: 60px;"></div>
+    <!-- Main weather skeleton -->
+    <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
+      <div class="d-flex align-items-center gap-3">
+        <div class="weather-icon skeleton-circle skeleton-pulse rounded-circle"></div>
+        <div>
+          <div class="skeleton-line skeleton-medium skeleton-pulse mb-2"></div>
+          <div class="skeleton-line skeleton-short skeleton-pulse"></div>
+        </div>
+      </div>
+      <div class="skeleton-line skeleton-short skeleton-pulse" style="width: 80px; height: 32px; border-radius: 50px;"></div>
+    </div>
+    <hr class="weather-divider my-2" />
+    <!-- Forecast skeletons -->
+    <div class="d-flex flex-column gap-2 flex-grow-1">
+      @for (dummy of [1, 2, 3]; track $index) {
+        <div class="d-flex align-items-center justify-content-between py-2">
+          <div class="d-flex align-items-center gap-2">
+            <div class="skeleton-circle skeleton-pulse rounded-circle" style="width: 32px; height: 32px;"></div>
+            <div>
+              <div class="skeleton-line skeleton-short skeleton-pulse mb-1"></div>
+              <div class="skeleton-line skeleton-pulse" style="width: 80px;"></div>
+            </div>
+          </div>
+          <div class="skeleton-line skeleton-pulse" style="width: 50px;"></div>
+        </div>
+      }
+    </div>
   </div>
 } @else {
-  <div class="weather-banner weather-default d-flex flex-wrap align-items-center justify-content-center bg-light text-muted position-relative overflow-hidden w-100 mb-0 py-4 rounded-4 h-100">
+  <div class="weather-card-container weather-default d-flex flex-wrap align-items-center justify-content-center bg-light text-muted w-100 py-4 rounded-4 h-100">
     <i class="fa-solid fa-cloud fs-3 me-2 text-secondary"></i>
     <span class="fw-bold fs-6">Weather data not available</span>
   </div>

@@ -329,6 +329,8 @@ function mapWeather(w: DayWeatherDto | null | undefined): Weather | undefined {
     tempMin: w.tempMin,
     condition: w.conditions,
     iconUrl: w.iconUrl,
+    humidity: w.humidity,
+    precipProb: w.precipProb,
     aiTip: '',
   };
 }
@@ -391,6 +393,6 @@ export function mapTripPlanDtoToUserTrip(dto: TripPlanDto): UserTrip {
     status: deriveStatus(dto.startDate, dto.endDate),
     flight,
     hotel,
+    weather: (dto.weather ?? []).map(mapWeather).filter((w): w is Weather => !!w),
   };
-
 }

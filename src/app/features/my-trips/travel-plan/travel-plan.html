@@ -52,16 +52,6 @@
                 (click)="exportToPDF()" [disabled]="isExporting()">
                 <i class="fa-solid fa-file-pdf"></i> {{ isExporting() ? 'Generating…' : 'Export PDF Itinerary' }}
               </button>
-              <div class="budget-card text-start p-3 w-100">
-                <div class="d-flex justify-content-between gap-4 mb-1">
-                  <span class="budget-label text-white fw-semibold text-uppercase">Budget Overview</span>
-                  <span class="budget-val text-white fw-bold">${{ t.spentBudget }} / ${{ t.totalBudget }}</span>
-                </div>
-                <div class="progress budget-progress-bar" style="height: 6px;">
-                  <div class="progress-bar" role="progressbar" [style.width.%]="budgetPercent()"
-                    [attr.aria-valuenow]="budgetPercent()" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -73,19 +63,68 @@
 
       <!-- Info Cards Grid -->
       <div class="info-cards-grid mb-5">
-        <!-- Hotel: widest cell — has image carousel -->
+        <!-- Hotel: side-by-side on Row 1 -->
         <div class="info-cell info-cell-hotel">
           <app-hotel-card [hotel]="t.hotel" [isGenerating]="isGenerating()" class="h-100"></app-hotel-card>
         </div>
 
-        <!-- Flight: narrow cell -->
-        <div class="info-cell info-cell-flight">
-          <app-flight-card [flight]="t.flight" [isGenerating]="isGenerating()" class="h-100"></app-flight-card>
+        <!-- Weather: side-by-side on Row 1 -->
+        <div class="info-cell info-cell-weather">
+          <app-weather-banner
+            [weatherList]="t.weather"
+            [destination]="t.destination"
+            [country]="t.country"
+            [selectedDayIndex]="selectedDayIndex()"
+            [isGenerating]="isGenerating()"
+            (daySelected)="selectDay($event)"
+            class="h-100"
+          ></app-weather-banner>
         </div>
 
-        <!-- Weather: stretches to fill remaining space -->
-        <div class="info-cell info-cell-weather">
-          <app-weather-banner [weather]="currentDayWeather()" [isGenerating]="isGenerating()" class="h-100"></app-weather-banner>
+        <!-- Budget Card: stand-alone next to Flight on Row 2 -->
+        <div class="info-cell info-cell-budget">
+          <div class="budget-card p-4 d-flex flex-column h-100 position-relative overflow-hidden justify-content-between">
+            <div class="d-flex flex-column">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <h4 class="budget-title mb-0 fw-bold d-inline-flex align-items-center gap-2">
+                  <i class="fa-solid fa-wallet fs-4" style="color: var(--primary, #B54304);"></i> Budget Overview
+                </h4>
+                <span class="badge" 
+                      [ngClass]="t.spentBudget <= t.totalBudget ? 'budget-badge-primary' : 'bg-danger-subtle text-danger'" 
+                      style="font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: 50px;">
+                  {{ t.spentBudget <= t.totalBudget ? 'Within Budget' : 'Over Budget' }}
+                </span>
+              </div>
+              <div class="d-flex align-items-baseline gap-2 mb-3">
+                <span class="budget-spent-val fw-bold" style="font-size: 1.8rem; font-family: 'Outfit', sans-serif;">${{ t.spentBudget.toFixed(2) }}</span>
+                <span class="budget-total-val text-muted" style="font-size: 1.05rem;">/ ${{ t.totalBudget.toFixed(2) }}</span>
+              </div>
+              <div class="progress budget-progress-bar mb-3" style="height: 8px; border-radius: 10px; background: rgba(0,0,0,0.06);">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
+                     [style.width.%]="budgetPercent()"
+                     [ngClass]="t.spentBudget <= t.totalBudget ? 'budget-progress-primary' : 'bg-danger'"
+                     [attr.aria-valuenow]="budgetPercent()" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+
+            <div class="budget-stats-row d-flex justify-content-between align-items-center mt-3 pt-3 border-top" style="border-top-color: rgba(0,0,0,0.05) !important;">
+              <div class="d-flex flex-column">
+                <span class="text-muted small fw-medium" style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px;">Remaining</span>
+                <span class="fw-bold" style="font-size: 0.95rem;" [style.color]="t.spentBudget <= t.totalBudget ? 'var(--primary, #B54304)' : '#c62828'">
+                  ${{ (t.totalBudget - t.spentBudget).toFixed(2) }}
+                </span>
+              </div>
+              <div class="d-flex flex-column text-end">
+                <span class="text-muted small fw-medium" style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px;">Usage</span>
+                <span class="fw-bold" style="font-size: 0.95rem;">{{ budgetPercent() }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flight: side-by-side on Row 2 -->
+        <div class="info-cell info-cell-flight">
+          <app-flight-card [flight]="t.flight" [isGenerating]="isGenerating()" class="h-100"></app-flight-card>
         </div>
       </div>
 
