@@ -8,10 +8,9 @@
    ──────────────────────────────────────────────────────────────────────────── */
 .info-cards-grid {
   display: grid;
-  /* Hotel ~38% | Flight ~24% | Weather fills the rest */
-  grid-template-columns: 2fr 1.2fr 2fr;
-  grid-template-rows: 1fr;
-  gap: 1.25rem;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 1.5rem;
   align-items: stretch;
   width: 100%;
 }
@@ -23,38 +22,12 @@
   min-width: 0; /* prevent overflow blowout in grid */
 }
 
-/* When flight is absent, weather spans the right two columns */
-.info-cell-weather.full-width {
-  grid-column: 2 / -1;
-}
-
-/* Tablet: stack hotel + flight side-by-side, weather below full-width */
-@media (max-width: 1024px) {
-  .info-cards-grid {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-  }
-
-  .info-cell-hotel  { grid-column: 1; grid-row: 1; }
-  .info-cell-flight { grid-column: 2; grid-row: 1; }
-  .info-cell-weather {
-    grid-column: 1 / -1; /* full width on second row */
-    grid-row: 2;
-  }
-}
-
-/* Mobile: single column, everything stacks */
-@media (max-width: 640px) {
+/* Tablet & Mobile: stack all cells in a single column */
+@media (max-width: 992px) {
   .info-cards-grid {
     grid-template-columns: 1fr;
-  }
-
-  .info-cell-hotel,
-  .info-cell-flight,
-  .info-cell-weather,
-  .info-cell-weather.full-width {
-    grid-column: 1;
-    grid-row: auto;
+    grid-template-rows: auto;
+    gap: 1.25rem;
   }
 }
 
@@ -170,28 +143,37 @@
 }
 
 .budget-card {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
-  max-width: 300px;
+  background: #ffffff;
+  border: 1px solid var(--border, #e8ddd6);
+  border-radius: var(--radius-card, 16px);
+  box-shadow: 0 4px 20px rgba(61, 43, 47, 0.04);
+  height: 100%;
+  box-sizing: border-box;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.budget-label {
-  font-size: 0.72rem;
-  letter-spacing: 0.5px;
+.budget-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(61, 43, 47, 0.08);
 }
 
-.budget-val {
-  font-size: 0.95rem;
+.budget-title {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 1.15rem;
+  color: var(--text-deep, #261814);
+}
+
+.budget-spent-val {
+  color: var(--text-deep, #261814);
+  line-height: 1;
+}
+
+.budget-total-val {
+  font-weight: 500;
 }
 
 .budget-progress-bar {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.budget-progress-bar .progress-bar {
-  background: var(--primary, #B54304);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -212,11 +194,23 @@
 }
 
 /* الـ summary-card اللي جوا كل component يملا الارتفاع */
-.info-cards-row app-flight-card .summary-card,
-.info-cards-row app-hotel-card .summary-card,
-.info-cards-row app-weather-banner > * {
+.info-cards-grid app-flight-card .summary-card,
+.info-cards-grid app-hotel-card .summary-card,
+.info-cards-grid app-weather-banner > *,
+.info-cards-grid app-flight-card,
+.info-cards-grid app-hotel-card,
+.info-cards-grid app-weather-banner {
   height: 100%;
   max-width: 100%;
+}
+
+.budget-badge-primary {
+  background-color: rgba(181, 67, 4, 0.08);
+  color: var(--primary, #B54304);
+}
+
+.budget-progress-primary {
+  background-color: var(--primary, #B54304) !important;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════

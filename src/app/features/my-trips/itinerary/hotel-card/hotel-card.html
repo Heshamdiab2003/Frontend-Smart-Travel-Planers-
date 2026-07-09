@@ -1,37 +1,33 @@
 @if (hotel) {
 <div class="summary-card hotel-card d-flex flex-column position-relative p-0 overflow-hidden">
-  
   <!-- Carousel Section -->
   <div class="hotel-carousel position-relative w-100">
     @if (hotel.images && hotel.images.length > 0) {
-      <img [src]="hotel.images[currentImageIndex]" class="carousel-img w-100 h-100" (error)="onImageError(currentImageIndex)" [alt]="'Photo of ' + hotel.name" loading="lazy" decoding="async">
+    <img [src]="hotel.images[currentImageIndex]" class="carousel-img w-100 h-100"
+      (error)="onImageError(currentImageIndex)" [alt]="'Photo of ' + hotel.name" loading="lazy" decoding="async" />
 
-      @if (hotel.images.length > 1) {
-        <button type="button" class="carousel-btn prev-btn" (click)="prevImage($event)" aria-label="Previous image">
-          <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="carousel-btn next-btn" (click)="nextImage($event)" aria-label="Next image">
-          <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-        </button>
+    @if (hotel.images.length > 1) {
+    <button type="button" class="carousel-btn prev-btn" (click)="prevImage($event)" aria-label="Previous image">
+      <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="carousel-btn next-btn" (click)="nextImage($event)" aria-label="Next image">
+      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+    </button>
 
-        <div class="carousel-dots d-flex justify-content-center gap-1 w-100 position-absolute pb-2" role="tablist" aria-label="Hotel photos">
-          @for (img of hotel.images; track $index) {
-            <button
-              type="button"
-              class="dot"
-              [class.active]="$index === currentImageIndex"
-              (click)="goToImage($index, $event)"
-              [attr.aria-label]="'Go to image ' + ($index + 1)"
-              [attr.aria-current]="$index === currentImageIndex ? 'true' : null"
-            ></button>
-          }
-        </div>
+    <div class="carousel-dots d-flex justify-content-center gap-1 w-100 position-absolute pb-2" role="tablist"
+      aria-label="Hotel photos">
+      @for (img of hotel.images; track $index) {
+      <button type="button" class="dot" [class.active]="$index === currentImageIndex"
+        (click)="goToImage($index, $event)" [attr.aria-label]="'Go to image ' + ($index + 1)"
+        [attr.aria-current]="$index === currentImageIndex ? 'true' : null"></button>
       }
+    </div>
+    }
     } @else {
-      <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center bg-light text-muted">
-        <i class="fa-solid fa-image fs-1 mb-2"></i>
-        <span class="small">No images available</span>
-      </div>
+    <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center bg-light text-muted">
+      <i class="fa-solid fa-image fs-1 mb-2"></i>
+      <span class="small">No images available</span>
+    </div>
     }
   </div>
 
@@ -48,10 +44,10 @@
         </div>
       </div>
       @if (hotel.pricePerNight) {
-        <div class="hotel-price text-end flex-shrink-0 ms-2">
-          <div class="fw-bold fs-5 text-success">${{ hotel.pricePerNight }}</div>
-          <div class="small text-muted">/ night</div>
-        </div>
+      <div class="hotel-price text-end flex-shrink-0 ms-2">
+        <div class="fw-bold fs-5 text-success">${{ hotel.pricePerNight }}</div>
+        <div class="small text-muted">/ night</div>
+      </div>
       }
     </div>
 
@@ -61,7 +57,7 @@
       }
       <span class="ms-1">· {{ hotel.reviewScore || hotel.rating }}/10</span>
       @if (hotel.reviewCount) {
-        <span class="ms-1 fw-normal text-muted small">({{ hotel.reviewCount }} reviews)</span>
+      <span class="ms-1 fw-normal text-muted small">({{ hotel.reviewCount }} reviews)</span>
       }
     </div>
 
@@ -77,11 +73,12 @@
     </div>
 
     <div class="mt-3 mt-auto">
-      <button class="btn btn-sm btn-primary fw-bold w-100 py-2" (click)="loadBookingLinks()" [disabled]="isLoadingLinks">
+      <button class="btn btn-sm btn-primary fw-bold w-100 py-2" (click)="loadBookingLinks()"
+        [disabled]="isLoadingLinks">
         @if (isLoadingLinks) {
-          <span class="spinner-border spinner-border-sm me-2"></span> Loading...
+        <span class="spinner-border spinner-border-sm me-2"></span> Loading...
         } @else {
-          <i class="fa-solid fa-external-link-alt me-2"></i> Book Now
+        <i class="fa-solid fa-external-link-alt me-2"></i> Book Now
         }
       </button>
     </div>
@@ -92,7 +89,9 @@
   <div class="hotel-carousel skeleton-pulse w-100"></div>
   <div class="card-body-wrap p-3 w-100">
     <div class="d-flex align-items-start gap-2 mb-2">
-      <div class="card-icon-wrap icon-secondary skeleton-pulse d-flex align-items-center justify-content-center flex-shrink-0"></div>
+      <div
+        class="card-icon-wrap icon-secondary skeleton-pulse d-flex align-items-center justify-content-center flex-shrink-0">
+      </div>
       <div class="w-100">
         <div class="skeleton-line skeleton-short skeleton-pulse mb-2"></div>
         <div class="skeleton-line skeleton-medium skeleton-pulse"></div>
@@ -102,9 +101,9 @@
   </div>
 </div>
 } @else {
-<div class="summary-card hotel-card d-flex flex-column justify-content-center align-items-center bg-light text-muted p-4 h-100 rounded-4">
+<div
+  class="summary-card hotel-card d-flex flex-column justify-content-center align-items-center bg-light text-muted p-4 h-100 rounded-4">
   <i class="fa-solid fa-hotel fs-1 mb-3 text-secondary"></i>
   <span class="fw-bold fs-5 mb-1">No Hotel Found</span>
-  <span class="small text-center">We couldn't find a hotel within your budget.</span>
 </div>
 }
