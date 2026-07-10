@@ -1,20 +1,53 @@
 @if (flight) {
-  <div class="summary-card flight-card d-flex align-items-start">
-    <div class="card-icon-wrap icon-primary d-flex align-items-center justify-content-center flex-shrink-0">
-      <i class="fa-solid fa-plane"></i>
-    </div>
-    <div class="card-body-wrap">
-      <div class="card-label fw-bold text-uppercase">Flight</div>
-      <div class="card-main fw-bold">{{ flight.airline }}</div>
-      <div class="card-sub fw-semibold">{{ flight.flightNumber }}</div>
-      <div class="card-times d-flex align-items-center gap-1 mt-1">
-        <span class="time-chip">{{ formatTime(flight.departureTime) }}</span>
-        <i class="fa-solid fa-arrow-right text-muted" style="font-size:.55rem;"></i>
-        <span class="time-chip">{{ formatTime(flight.arrivalTime) }}</span>
+  <div class="summary-card flight-card d-flex flex-column justify-content-center position-relative overflow-hidden h-100">
+    <div class="card-bg-accent"></div>
+
+    <div class="card-body-wrap w-100 position-relative z-1">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-3">
+          <img [src]="'https://images.kiwi.com/airlines/64/' + flight.airlineCode + '.png'" 
+               alt="{{ flight.airline }} logo" 
+               class="airline-logo rounded-circle shadow-sm border"
+               onerror="this.src='assets/default-airline.png'; this.classList.add('fallback-icon');">
+          <div>
+            <div class="card-main fw-bold lh-1 mb-1 fs-5">{{ flight.airline }}</div>
+            <div class="card-sub text-muted fw-semibold small">{{ flight.flightNumber }}</div>
+          </div>
+        </div>
+        <div class="badge px-3 py-2 rounded-pill fw-bold border me-3" style="color: var(--primary, #B54304); background-color: rgba(181, 67, 4, 0.1); border-color: rgba(181, 67, 4, 0.25) !important;">
+          <i class="fa-solid fa-plane-departure me-1"></i> Flight
+        </div>
       </div>
-      <div class="card-route mt-1">
-        <i class="fa-solid fa-arrow-right-arrow-left me-1" style="font-size:.6rem;"></i>
-        {{ flight.departure }} → {{ flight.arrival }}
+
+      <div class="flight-details-box bg-light rounded-4 p-4 mt-2 border border-secondary border-opacity-10 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center position-relative">
+          
+          <div class="text-center" style="min-width: 80px;">
+            <div class="fs-3 fw-bolder text-dark lh-1 mb-2">{{ formatTime(flight.departureTime) }}</div>
+            <div class="fw-bold text-secondary fs-5 mb-1">{{ flight.departure }}</div>
+            @if(flight.departureTerminal) {
+              <div class="text-muted small badge bg-white border border-secondary border-opacity-25 shadow-sm text-dark px-2 py-1">Terminal {{ flight.departureTerminal }}</div>
+            }
+          </div>
+
+          <div class="d-flex flex-column align-items-center flex-grow-1 px-4 position-relative z-0">
+            <div class="text-muted fw-bold small mb-2">{{ flight.flightDuration }}</div>
+            <div class="w-100 position-relative d-flex align-items-center justify-content-center" style="height: 2px;">
+              <div class="position-absolute w-100 bg-secondary opacity-25" style="height: 2px; border-radius: 2px;"></div>
+              <i class="fa-solid fa-plane text-primary position-absolute px-2 z-1" style="font-size: 1.2rem; background-color: var(--bs-light);"></i>
+            </div>
+            <div class="text-success small fw-bold mt-2"><i class="fa-solid fa-check-circle me-1"></i> Direct</div>
+          </div>
+
+          <div class="text-center" style="min-width: 80px;">
+            <div class="fs-3 fw-bolder text-dark lh-1 mb-2">{{ formatTime(flight.arrivalTime) }}</div>
+            <div class="fw-bold text-secondary fs-5 mb-1">{{ flight.arrival }}</div>
+            @if(flight.arrivalTerminal) {
+              <div class="text-muted small badge bg-white border border-secondary border-opacity-25 shadow-sm text-dark px-2 py-1">Terminal {{ flight.arrivalTerminal }}</div>
+            }
+          </div>
+
+        </div>
       </div>
     </div>
   </div>

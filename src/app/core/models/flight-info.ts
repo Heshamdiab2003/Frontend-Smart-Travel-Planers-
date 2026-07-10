@@ -6,4 +6,8 @@ export interface FlightInfo {
   arrival: string;
   departureTime: string;
   arrivalTime: string;
+  airlineCode: string;
+  departureTerminal: string;
+  arrivalTerminal: string;
+  flightDuration: string;
 }

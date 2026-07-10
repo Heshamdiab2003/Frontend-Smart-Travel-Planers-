@@ -20,6 +20,10 @@ export interface TripFlightDto {
   arrivalAirport: string;
   departureTime: string;
   arrivalTime: string;
+  airlineCode: string;
+  departureTerminal: string;
+  arrivalTerminal: string;
+  flightDuration: string;
   estimatedPrice: number;
 }
 

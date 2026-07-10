@@ -363,6 +363,10 @@ export function mapTripPlanDtoToUserTrip(dto: TripPlanDto): UserTrip {
       arrival: dto.flight.arrivalAirport,
       departureTime: dto.flight.departureTime,
       arrivalTime: dto.flight.arrivalTime,
+      airlineCode: dto.flight.airlineCode,
+      departureTerminal: dto.flight.departureTerminal,
+      arrivalTerminal: dto.flight.arrivalTerminal,
+      flightDuration: dto.flight.flightDuration,
     }
     : undefined;
 
