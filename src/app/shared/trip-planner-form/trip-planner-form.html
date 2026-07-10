@@ -173,14 +173,27 @@
   <div class="row g-3 mt-1">
     <!-- BUDGET -->
     <div class="col-12 col-md-6">
-      <label class="planner-label form-label text-uppercase fw-semibold small mb-1">Budget</label>
-      <div class="planner-field input-group border rounded-3 px-2">
+      <label class="planner-label form-label text-uppercase fw-semibold small mb-1">Budget (USD)</label>
+      <div class="planner-field input-group border rounded-3 px-2"
+        [class.border-danger]="form.get('budget')?.invalid && form.get('budget')?.touched">
         <span class="input-group-text bg-transparent border-0 px-1"><i class="fa-solid fa-money-bill"></i></span>
-        <input type="text" formControlName="budget" placeholder="e.g. 5000 USD"
-          class="form-control border-0 bg-transparent shadow-none fw-medium" />
+        <input 
+          type="number" 
+          formControlName="budget" 
+          placeholder="e.g. 500" 
+          min="100"
+          step="1"
+          class="form-control border-0 bg-transparent shadow-none fw-medium" 
+          (blur)="form.get('budget')?.markAsTouched()"
+        />
       </div>
-      @if (form.get('budget')?.touched && form.get('budget')?.invalid) {
-      <div class="text-danger small mt-1">Please enter a budget amount to continue.</div>
+      @if (form.get('budget')?.invalid && (form.get('budget')?.touched || form.get('budget')?.dirty)) {
+        @if (form.get('budget')?.errors?.['required']) {
+          <div class="text-danger small mt-1">Please enter a budget amount to continue.</div>
+        }
+        @if (form.get('budget')?.errors?.['min']) {
+          <div class="text-danger small mt-1">Budget must be at least 100 USD to create a meaningful trip plan.</div>
+        }
       }
     </div>
 

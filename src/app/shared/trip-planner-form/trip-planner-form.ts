@@ -107,7 +107,7 @@ export class TripPlannerForm {
         children: [0],
         rooms: [1],
         travelStyle: [[] as string[]],
-        budget: ['', [Validators.required]],
+        budget: [null, [Validators.required, Validators.min(100)]],
         specialRequests: [''],
         isRoundTrip: [true],
       },
@@ -129,6 +129,15 @@ export class TripPlannerForm {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.unverifiedWarning = null;
+      });
+
+    // Debug budget validation
+    this.form.get('budget')?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        console.log('Budget changed to:', value);
+        console.log('Budget valid?', this.form.get('budget')?.valid);
+        console.log('Budget errors:', this.form.get('budget')?.errors);
       });
   }
 
@@ -234,6 +243,10 @@ export class TripPlannerForm {
   // ── Submission pipeline ────────────────────────────────────────────────
 
   submit(): void {
+    console.log('Form valid?', this.form.valid);
+    console.log('Budget value:', this.form.get('budget')?.value);
+    console.log('Budget errors:', this.form.get('budget')?.errors);
+    
     if (this.form.invalid || this.isCreatingPlan || this.isResolving) {
       this.form.markAllAsTouched();
       return;
