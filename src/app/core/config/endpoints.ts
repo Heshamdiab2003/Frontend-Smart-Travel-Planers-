@@ -37,6 +37,8 @@ export const ENDPOINTS = {
   places: {
     resolve: `${API_BASE_URL}/places/resolve`,
     confirm: `${API_BASE_URL}/places/confirm`,
+    photos: (name: string, cat: string, addr: string) =>
+      `${API_BASE_URL}/places/photos?placeName=${encodeURIComponent(name)}&category=${encodeURIComponent(cat)}&address=${encodeURIComponent(addr)}`,
   },
   hotels: {
     bookingLinks: (hotelName: string) =>

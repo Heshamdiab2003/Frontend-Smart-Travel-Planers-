@@ -8,6 +8,7 @@ export type ActivityCategory = 'food' | 'attraction' | 'hotel' | 'transport' | '
 export interface Activity {
   /** Stable unique id, used for list tracking and map markers. */
   id: string;
+  dbId?: string;
   time: string;
   title: string;
   locationName: string;
@@ -19,4 +20,9 @@ export interface Activity {
   /** Emoji shown on the timeline dot and map marker. */
   icon: string;
   cost?: number;
+  rating?: number | null;
+  address?: string | null;
+  imageUrl?: string | null;
+  imageLoading?: boolean;
+  imageError?: boolean;
 }

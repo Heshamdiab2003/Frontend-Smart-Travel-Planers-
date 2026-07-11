@@ -6,6 +6,7 @@ import {
   computed,
   inject,
   signal,
+  ViewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgClass, isPlatformBrowser, NgTemplateOutlet } from '@angular/common';
@@ -89,6 +90,8 @@ export class TravelPlanPage implements OnInit {
   readonly isSplitOpen = signal(false);
   readonly suggestions = signal<PlaceSuggestion[]>([]);
   readonly isSuggestionsLoading = signal(false);
+
+  @ViewChild(InteractiveMap) mapRef!: InteractiveMap;
 
   readonly currentDayPlan = computed(() => {
     const t = this.trip();
@@ -176,6 +179,44 @@ export class TravelPlanPage implements OnInit {
     if (current && current.id === mapped.id) {
       this.trip.set({ ...current, coverImage });
     }
+
+    this.loadActivityImages(mapped);
+  }
+
+  private loadActivityImages(trip: UserTrip): void {
+    const headers = this.auth.getAuthHeaders();
+    for (const day of trip.days) {
+      for (const activity of day.activities) {
+        if (!activity.imageUrl && !activity.imageError) {
+          // Fire and forget, update the object directly when it arrives
+          this.http.get<Array<{ urls: string[] }>>(
+            ENDPOINTS.places.photos(activity.title, activity.category, activity.address ?? activity.locationName),
+            { headers }
+          ).subscribe({
+            next: (data) => {
+              if (Array.isArray(data) && data.length > 0 && data[0].urls?.length > 0) {
+                const fetchedUrl = data[0].urls[0];
+                activity.imageUrl = fetchedUrl;
+                
+                // Save it to the backend so it doesn't need to be fetched next time
+                if (activity.dbId) {
+                  this.http.patch(
+                    `/api/trip/activity/${activity.dbId}/image`,
+                    { imageUrl: fetchedUrl },
+                    { headers }
+                  ).subscribe();
+                }
+              } else {
+                activity.imageError = true;
+              }
+            },
+            error: () => {
+              activity.imageError = true;
+            }
+          });
+        }
+      }
+    }
   }
 
   private loadSuggestions(tripId: string): void {
@@ -224,6 +265,18 @@ export class TravelPlanPage implements OnInit {
   openSplit(): void { this.isSplitOpen.set(true); }
   closeSplit(): void { this.isSplitOpen.set(false); }
   selectDay(index: number): void { this.selectedDayIndex.set(index); }
+
+  hoverMarker(index: number): void {
+    if (this.mapRef) {
+      this.mapRef.highlightMarker(index);
+    }
+  }
+
+  unhoverMarker(index: number): void {
+    if (this.mapRef) {
+      this.mapRef.unhighlightMarker(index);
+    }
+  }
 
   getCategoryClass(category: string): string {
     const map: Record<string, string> = {
@@ -309,6 +362,7 @@ function mapActivity(a: ActivityPlanDto, dayNumber: number, index: number): Acti
   const { type, category } = classifyActivity(a.type);
   return {
     id: a.placeId || `d${dayNumber}-a${index + 1}`,
+    dbId: a.id,
     time: a.timeSlot ?? '',
     title: a.name,
     locationName: a.locationName ?? a.name,
@@ -319,6 +373,9 @@ function mapActivity(a: ActivityPlanDto, dayNumber: number, index: number): Acti
     category,
     icon: CATEGORY_ICONS[category],
     cost: a.estimatedCost,
+    rating: a.rating,
+    address: a.address,
+    imageUrl: a.imageUrl,
   };
 }
 

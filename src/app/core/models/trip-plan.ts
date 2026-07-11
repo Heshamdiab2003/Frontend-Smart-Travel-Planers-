@@ -42,6 +42,7 @@ export interface ActivityImageDto {
 }
 
 export interface ActivityPlanDto {
+  id: string;
   name: string;
   type: string;
   locationName?: string | null;
@@ -50,6 +51,9 @@ export interface ActivityPlanDto {
   timeSlot?: string | null;
   estimatedCost: number;
   placeId?: string | null;
+  rating?: number | null;
+  address?: string | null;
+  imageUrl?: string | null;
   images: ActivityImageDto[];
 }
 

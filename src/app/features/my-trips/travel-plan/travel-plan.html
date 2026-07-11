@@ -190,19 +190,65 @@
                     activity.icon }}</div>
                 </div>
                 <div class="tl-card-col ps-2 pb-4">
-                  <div class="activity-card p-3 p-md-4 rounded-4">
-                    <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
-                      <h4 class="activity-name mb-0 fw-bold">{{ activity.title }}</h4>
-                      <span class="cat-badge cat-badge-{{ activity.category }} fw-bold text-uppercase">
-                        {{ activity.category }}
-                      </span>
+                  <div class="activity-card p-0 rounded-4 overflow-hidden d-flex flex-column" 
+                       (mouseenter)="hoverMarker($index)" 
+                       (mouseleave)="unhoverMarker($index)"
+                       style="background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.2s, box-shadow 0.2s;">
+                    <!-- Image Section -->
+                    <div class="position-relative" style="height: 160px; background: #f8f9fa;">
+                      @if (activity.imageUrl) {
+                        <img [src]="activity.imageUrl" alt="{{ activity.title }}" 
+                             style="width: 100%; height: 100%; object-fit: cover; display: block;" 
+                             (error)="activity.imageError = true"
+                             [class.d-none]="activity.imageError">
+                      }
+                      @if (!activity.imageUrl || activity.imageError) {
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center skeleton-pulse" 
+                             style="background: #eee; color: #aaa; font-size: 2rem;">
+                          <i class="fa-solid fa-image"></i>
+                        </div>
+                      }
+                      <div class="position-absolute top-0 end-0 m-2">
+                        <span class="cat-badge cat-badge-{{ activity.category }} fw-bold text-uppercase shadow-sm">
+                          {{ activity.category }}
+                        </span>
+                      </div>
                     </div>
-                    <p class="activity-desc mb-2">{{ activity.locationName || t.destination }}</p>
-                    <div class="activity-footer mt-2 d-flex align-items-center gap-2">
-                      <i class="fa-solid fa-location-dot footer-pin-icon"></i>
-                      <span class="activity-coords">
-                        {{ activity.lat.toFixed(4) }}, {{ activity.lng.toFixed(4) }}
-                      </span>
+                    
+                    <!-- Content Section -->
+                    <div class="p-3 d-flex flex-column flex-grow-1">
+                      <div class="d-flex justify-content-between align-items-start mb-1">
+                        <h4 class="activity-name mb-0 fw-bold" style="font-size: 1.1rem; color: #2b2b2b;">{{ activity.title }}</h4>
+                        @if (activity.rating) {
+                          <div class="d-flex align-items-center badge bg-warning text-dark shadow-sm">
+                            <i class="fa-solid fa-star me-1" style="font-size: 0.75rem;"></i>
+                            <span class="fw-bold">{{ activity.rating }}</span>
+                          </div>
+                        }
+                      </div>
+                      
+                      @if (activity.address) {
+                        <p class="text-muted small mb-2 d-flex align-items-start">
+                          <i class="fa-solid fa-map-pin mt-1 me-2 text-danger" style="font-size: 0.85rem;"></i>
+                          <span>{{ activity.address }}</span>
+                        </p>
+                      } @else {
+                        <p class="text-muted small mb-2 d-flex align-items-center">
+                          <i class="fa-solid fa-location-dot me-2 text-danger"></i>
+                          <span>{{ activity.locationName || t.destination }}</span>
+                        </p>
+                      }
+                      
+                      <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center" style="border-color: rgba(0,0,0,0.05) !important;">
+                        <span class="activity-coords small text-muted font-monospace" style="font-size: 0.75rem;">
+                          <i class="fa-solid fa-location-crosshairs me-1"></i> {{ activity.lat.toFixed(4) }}, {{ activity.lng.toFixed(4) }}
+                        </span>
+                        @if (activity.cost && activity.cost > 0) {
+                          <span class="fw-bold" style="color: var(--primary, #B54304);">
+                            ~${{ activity.cost }}
+                          </span>
+                        }
+                      </div>
                     </div>
                   </div>
                 </div>
