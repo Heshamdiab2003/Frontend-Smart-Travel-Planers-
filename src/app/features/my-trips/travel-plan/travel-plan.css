@@ -1,3 +1,13 @@
+.dashboard-grid {
+  height: calc(100vh - 120px);
+  min-height: 600px;
+}
+@media (max-width: 992px) {
+  .dashboard-grid {
+    height: auto;
+  }
+}
+
 /* ══════════════════════════════════════════════════════════════════════════════
    DASHBOARD HERO BANNER & BASIC STYLES
    ══════════════════════════════════════════════════════════════════════════════ */
@@ -388,11 +398,14 @@
    ══════════════════════════════════════════════════════════════════════════════ */
 .sticky-map-wrapper {
   position: sticky;
-  top: 30px;
+  top: 120px;
+  height: fit-content;
+  z-index: 10;
 }
 
 .map-view-box {
-  height: 520px;
+  height: calc(100vh - 250px);
+  min-height: 520px;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -434,8 +447,9 @@
   }
 
   .map-view-box {
-    height: 400px;
-  }
+  height: calc(100vh - 250px);
+  min-height: 520px;
+}
 
   .info-cards-row {
     flex-wrap: wrap;
@@ -743,4 +757,32 @@
 .suggestions-empty {
   background: #fff;
   border: 1px dashed #d4c5b7;
+}/* Timeline Custom Scroll */
+.timeline-container {
+  height: calc(100vh - 250px);
+  min-height: 520px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 15px;
+  padding-bottom: 4rem;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
 }
+
+.timeline-container::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .timeline-container {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    overflow-y: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+

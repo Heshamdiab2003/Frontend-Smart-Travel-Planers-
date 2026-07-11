@@ -20,6 +20,10 @@ export interface TripFlightDto {
   arrivalAirport: string;
   departureTime: string;
   arrivalTime: string;
+  airlineCode: string;
+  departureTerminal: string;
+  arrivalTerminal: string;
+  flightDuration: string;
   estimatedPrice: number;
 }
 
@@ -38,6 +42,7 @@ export interface ActivityImageDto {
 }
 
 export interface ActivityPlanDto {
+  id: string;
   name: string;
   type: string;
   locationName?: string | null;
@@ -46,6 +51,9 @@ export interface ActivityPlanDto {
   timeSlot?: string | null;
   estimatedCost: number;
   placeId?: string | null;
+  rating?: number | null;
+  address?: string | null;
+  imageUrl?: string | null;
   images: ActivityImageDto[];
 }
 
@@ -80,6 +88,7 @@ export interface TripPlanDto {
   estimatedTotalCost: number;
   hotel: TripHotelDto | null;
   flight: TripFlightDto | null;
+  returnFlight: TripFlightDto | null;
   days: DayPlanDto[];
   weather: DayWeatherDto[];
   summary: string;

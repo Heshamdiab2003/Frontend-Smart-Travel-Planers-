@@ -159,6 +159,44 @@ export class InteractiveMap implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
+  highlightMarker(index: number): void {
+    if (!this.markerLayers[index]) return;
+    const marker = this.markerLayers[index];
+    const icon = marker.getIcon() as L.DivIcon;
+    const currentHtml = icon.options.html as string;
+    
+    // Simple way: just replace the border/shadow to "highlight" it
+    const highlightedHtml = currentHtml.replace('border: 2px solid #ffffff;', 'border: 3px solid #FFD700; transform: scale(1.15); transition: transform 0.2s;');
+    
+    const newIcon = L.divIcon({
+      ...icon.options,
+      html: highlightedHtml,
+      className: 'custom-map-marker highlighted'
+    });
+    marker.setIcon(newIcon);
+    marker.setZIndexOffset(1000);
+    marker.openPopup();
+  }
+
+  unhighlightMarker(index: number): void {
+    if (!this.markerLayers[index]) return;
+    const marker = this.markerLayers[index];
+    const icon = marker.getIcon() as L.DivIcon;
+    const currentHtml = icon.options.html as string;
+    
+    // Revert the highlight
+    const originalHtml = currentHtml.replace('border: 3px solid #FFD700; transform: scale(1.15); transition: transform 0.2s;', 'border: 2px solid #ffffff;');
+    
+    const newIcon = L.divIcon({
+      ...icon.options,
+      html: originalHtml,
+      className: 'custom-map-marker'
+    });
+    marker.setIcon(newIcon);
+    marker.setZIndexOffset(0);
+    marker.closePopup();
+  }
+
   zoomIn(): void {
     this.map?.zoomIn();
   }
